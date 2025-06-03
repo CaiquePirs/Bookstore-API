@@ -36,17 +36,17 @@ public class AuthorController {
 
     @GetMapping("{id}")
     public ResponseEntity<AuthorDTO> searchAuthor(@PathVariable String id){
-        var author_id = UUID.fromString(id);
+        var authorId = UUID.fromString(id);
 
-       Optional<Author> authorOptional = service.search(author_id);
+       Optional<Author> authorOptional = service.search(authorId);
 
        if(authorOptional.isPresent()){
            Author author = authorOptional.get();
 
            AuthorDTO dto = new AuthorDTO(
-                   author_id,
+                   authorId,
                    author.getName(),
-                   author.getNacionality(),
+                   author.getNationality(),
                    author.getBiography(),
                    author.getDateBirth());
            return ResponseEntity.ok(dto);
@@ -74,9 +74,9 @@ public class AuthorController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable String id){
-        var author_id = UUID.fromString(id);
+        var authorId = UUID.fromString(id);
 
-        Optional<Author> authorOptional = service.search(author_id);
+        Optional<Author> authorOptional = service.search(authorId);
 
         if(authorOptional.isEmpty()){
             return ResponseEntity.notFound().build();

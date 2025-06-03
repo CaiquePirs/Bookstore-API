@@ -23,7 +23,7 @@ public class Author {
     private String name;
 
     @Column(nullable = false)
-    private String nacionality;
+    private String nationality;
 
     @Column(length = 100, nullable = false)
     private String biography;
@@ -36,9 +36,9 @@ public class Author {
 
     public Author(){}
 
-    public Author(String name, String nacionality, String biography, LocalDate dateBirth){
+    public Author(String name, String nationality, String biography, LocalDate dateBirth){
         this.name = name;
-        this.nacionality = nacionality;
+        this.nationality = nationality;
         this.biography = biography;
         this.dateBirth = dateBirth;
     }
