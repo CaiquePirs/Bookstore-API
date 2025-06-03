@@ -19,11 +19,16 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String nacionality;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String biography;
+
+    @Column(nullable = false)
     private LocalDate dateBirth;
 
     @UpdateTimestamp
@@ -38,7 +43,7 @@ public class Author {
         this.dateBirth = dateBirth;
     }
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Book> books = new ArrayList<>();
 
