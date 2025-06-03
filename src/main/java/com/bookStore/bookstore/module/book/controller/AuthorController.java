@@ -6,13 +6,12 @@ import com.bookStore.bookstore.module.book.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RestController
@@ -31,6 +30,42 @@ public class AuthorController {
                 .buildAndExpand(author.getId())
                 .toUri();
         return ResponseEntity.created(uri).body(author);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<AuthorDTO> searchAuthor(@PathVariable String id){
+        var author_id = UUID.fromString(id);
+
+       Optional<Author> authorOptional = service.search(author_id);
+
+       if(authorOptional.isPresent()){
+           Author author = authorOptional.get();
+
+           AuthorDTO dto = new AuthorDTO(
+                   author_id,
+                   author.getName(),
+                   author.getNacionality(),
+                   author.getBiography(),
+                   author.getDateBirth());
+           return ResponseEntity.ok(dto);
+       }
+       return ResponseEntity.notFound().build();
+
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteAuthor(@PathVariable String id){
+        var author_id = UUID.fromString(id);
+
+        Optional<Author> authorOptional = service.search(author_id);
+
+        if(authorOptional.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        service.delete(authorOptional.get());
+
+        return ResponseEntity.noContent().build();
     }
 
 
