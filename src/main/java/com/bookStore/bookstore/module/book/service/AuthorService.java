@@ -5,6 +5,7 @@ import com.bookStore.bookstore.module.book.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,6 +22,22 @@ public class AuthorService {
     public Optional<Author> search(UUID id){
         return repository.findById(id);
     }
+
+    public List<Author> filterSearch(String name, String nationality){
+
+        if(name != null && nationality != null) {
+            return repository.findByNameAndNationality(name, nationality);
+
+        } else if(name != null){
+            return repository.findByName(name);
+
+        } else if(nationality != null){
+            return repository.findByNationality(nationality);
+        }
+
+        return repository.findAll();
+    }
+
 
     public void delete(Author author){
         repository.delete(author);

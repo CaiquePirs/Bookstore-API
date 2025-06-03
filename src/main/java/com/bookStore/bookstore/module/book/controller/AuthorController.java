@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RestController
@@ -50,6 +52,23 @@ public class AuthorController {
            return ResponseEntity.ok(dto);
        }
        return ResponseEntity.notFound().build();
+
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AuthorDTO>> filterSearch(@RequestParam(value = "name", required = false ) String name,
+                                                         @RequestParam(value = "nacionality", required = false ) String nationality) {
+
+        List<Author> result = service.filterSearch(name, nationality);
+        List<AuthorDTO> authorDTOS = result.stream()
+                .map(author -> new AuthorDTO(
+                        author.getId(),
+                        author.getName(),
+                        author.getNationality(),
+                        author.getBiography(),
+                        author.getDateBirth())).collect(Collectors.toList());
+
+        return ResponseEntity.ok(authorDTOS);
 
     }
 
