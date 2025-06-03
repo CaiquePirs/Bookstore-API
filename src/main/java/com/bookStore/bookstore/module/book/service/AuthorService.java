@@ -43,4 +43,10 @@ public class AuthorService {
         repository.delete(author);
     }
 
+    public void update(Author author){
+        repository.save(author);
+    }
+
+
+
 }
