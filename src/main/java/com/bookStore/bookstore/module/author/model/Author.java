@@ -1,5 +1,6 @@
-package com.bookStore.bookstore.module.book.model;
+    package com.bookStore.bookstore.module.author.model;
 
+import com.bookStore.bookstore.module.book.model.Book;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
