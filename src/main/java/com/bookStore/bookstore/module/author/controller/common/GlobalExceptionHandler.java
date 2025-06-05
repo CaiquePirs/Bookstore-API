@@ -2,8 +2,8 @@ package com.bookStore.bookstore.module.author.controller.common;
 
 import com.bookStore.bookstore.module.author.DTO.ErrorField;
 import com.bookStore.bookstore.module.author.DTO.ErrorResponse;
+import com.bookStore.bookstore.module.author.exceptions.AuthorNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,5 +37,15 @@ public class GlobalExceptionHandler {
         ErrorField errorField = new ErrorField("date", "Invalid date format. Use default: yyyy-MM-dd.");
 
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Error converting date", List.of(errorField));
+    }
+
+    @ExceptionHandler(AuthorNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAuthorNotFoundException(AuthorNotFoundException e){
+
+        ErrorField errorField = new ErrorField("Id", "Author not found");
+
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), "ID author not found", List.of(errorField));
+
     }
 }
