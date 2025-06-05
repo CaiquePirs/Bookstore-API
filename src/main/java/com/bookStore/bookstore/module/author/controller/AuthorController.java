@@ -2,6 +2,7 @@ package com.bookStore.bookstore.module.author.controller;
 
 import com.bookStore.bookstore.module.author.DTO.AuthorDTO;
 import com.bookStore.bookstore.module.author.DTO.ErrorResponse;
+import com.bookStore.bookstore.module.author.exceptions.AuthorNotFoundException;
 import com.bookStore.bookstore.module.author.exceptions.DuplicateRecordException;
 import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.author.service.AuthorService;
@@ -45,24 +46,18 @@ public class AuthorController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<AuthorDTO> searchAuthor(@PathVariable String id) {
-        var authorId = UUID.fromString(id);
+    public ResponseEntity<AuthorDTO> searchAuthor(@PathVariable UUID id) {
 
-        Optional<Author> authorOptional = service.searchById(authorId);
+        Author author = service.searchById(id)
+                .orElseThrow(() -> new AuthorNotFoundException(id));
 
-        if (authorOptional.isPresent()) {
-            Author author = authorOptional.get();
+        AuthorDTO authorDTO = new AuthorDTO(author.getId(),
+                author.getName(),
+                author.getNationality(),
+                author.getBiography(),
+                author.getDateBirth());
 
-            AuthorDTO dto = new AuthorDTO(
-                    authorId,
-                    author.getName(),
-                    author.getNationality(),
-                    author.getBiography(),
-                    author.getDateBirth());
-            return ResponseEntity.ok(dto);
-        }
-        return ResponseEntity.notFound().build();
-
+        return ResponseEntity.ok(authorDTO);
     }
 
     @GetMapping
@@ -83,31 +78,22 @@ public class AuthorController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteAuthor(@PathVariable String id) {
-        var authorId = UUID.fromString(id);
+    public ResponseEntity<String> deleteAuthor(@PathVariable UUID id) {
+        var authorId = service.searchById(id)
+                .orElseThrow(() -> new AuthorNotFoundException(id));
 
-        Optional<Author> authorOptional = service.searchById(authorId);
+        service.delete(authorId);
 
-        if (authorOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        service.delete(authorOptional.get());
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Author deleted successfully");
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> update(@PathVariable String id, @RequestBody AuthorDTO dto) {
+    public ResponseEntity<Object> update(@PathVariable UUID id, @RequestBody AuthorDTO dto) {
         try {
-            var authorId = UUID.fromString(id);
-            Optional<Author> authorOptional = service.searchById(authorId);
+            Author authorSearch = service.searchById(id)
+                    .orElseThrow(() -> new AuthorNotFoundException(id));
 
-            if (authorOptional.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-
-            var author = authorOptional.get();
+            var author = authorSearch;
             author.setName(dto.name());
             author.setNationality(dto.nationality());
             author.setBiography(dto.biography());
@@ -115,7 +101,7 @@ public class AuthorController {
 
             service.update(author);
 
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok("Author updated successfully");
 
         } catch (DuplicateRecordException e) {
             var errorDTO = ErrorResponse.conflict(e.getMessage());
