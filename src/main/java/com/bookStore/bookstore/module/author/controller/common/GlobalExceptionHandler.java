@@ -3,12 +3,14 @@ package com.bookStore.bookstore.module.author.controller.common;
 import com.bookStore.bookstore.module.author.DTO.ErrorField;
 import com.bookStore.bookstore.module.author.DTO.ErrorResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,5 +28,14 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList());
 
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Erro de validação", listErrors);
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponse handleDateTimeParseException(DateTimeParseException e) {
+
+        ErrorField errorField = new ErrorField("date", "Invalid date format. Use default: yyyy-MM-dd.");
+
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Error converting date", List.of(errorField));
     }
 }
