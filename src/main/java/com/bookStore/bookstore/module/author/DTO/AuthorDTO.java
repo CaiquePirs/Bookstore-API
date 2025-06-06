@@ -1,6 +1,4 @@
 package com.bookStore.bookstore.module.author.DTO;
-
-import com.bookStore.bookstore.module.author.model.Author;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,9 +19,4 @@ public record AuthorDTO(UUID id,
 
                         @NotNull(message = "Date birth is required")
                         LocalDate dateBirth) {
-
-    public Author author(){
-        Author author = new Author(this.name, this.nationality, this.biography, this.dateBirth);
-        return author;
-    }
 }
