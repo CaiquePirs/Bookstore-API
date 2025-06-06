@@ -1,6 +1,7 @@
 package com.bookStore.bookstore.module.author.controller;
 
 import com.bookStore.bookstore.module.author.DTO.AuthorDTO;
+import com.bookStore.bookstore.module.author.DTO.AuthorMapper;
 import com.bookStore.bookstore.module.author.DTO.ErrorResponse;
 import com.bookStore.bookstore.module.author.exceptions.AuthorNotFoundException;
 import com.bookStore.bookstore.module.author.exceptions.DuplicateRecordException;
@@ -15,7 +16,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,16 +27,20 @@ public class AuthorController {
     @Autowired
     private AuthorService service;
 
+    @Autowired
+    private AuthorMapper mapper;
+
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody @Valid AuthorDTO authorDTO) {
+    public ResponseEntity<Object> create(@RequestBody @Valid AuthorDTO dto) {
         try {
-            var author = service.create(authorDTO.author());
+            Author author = mapper.toEntity(dto);
+            service.create(author);
 
             URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
                     .buildAndExpand(author.getId())
                     .toUri();
-            return ResponseEntity.created(uri).body(author);
+            return ResponseEntity.created(uri).body(mapper.toDTO(author));
 
         } catch (DuplicateRecordException e) {
             var errorDTO = ErrorResponse.conflict(e.getMessage());
@@ -47,17 +51,11 @@ public class AuthorController {
 
     @GetMapping("{id}")
     public ResponseEntity<AuthorDTO> searchAuthor(@PathVariable UUID id) {
+        return service.searchById(id).map(author -> {
+            AuthorDTO dto = mapper.toDTO(author);
 
-        Author author = service.searchById(id)
-                .orElseThrow(() -> new AuthorNotFoundException(id));
-
-        AuthorDTO authorDTO = new AuthorDTO(author.getId(),
-                author.getName(),
-                author.getNationality(),
-                author.getBiography(),
-                author.getDateBirth());
-
-        return ResponseEntity.ok(authorDTO);
+            return ResponseEntity.ok(dto);
+        }).orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     @GetMapping
@@ -65,35 +63,31 @@ public class AuthorController {
                                                         @RequestParam(value = "nacionality", required = false) String nationality) {
 
         List<Author> result = service.filterSearch(name, nationality);
-        List<AuthorDTO> authorDTOS = result.stream()
-                .map(author -> new AuthorDTO(
-                        author.getId(),
-                        author.getName(),
-                        author.getNationality(),
-                        author.getBiography(),
-                        author.getDateBirth())).collect(Collectors.toList());
 
-        return ResponseEntity.ok(authorDTOS);
+        List<AuthorDTO> authorDTOs = result.stream()
+                .map(author -> mapper.toDTO(author))
+                .collect(Collectors.toList());
 
+        return ResponseEntity.ok(authorDTOs);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteAuthor(@PathVariable UUID id) {
-        var authorId = service.searchById(id)
+        var author = service.searchById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
 
-        service.delete(authorId);
+        service.delete(author);
 
         return ResponseEntity.ok("Author deleted successfully");
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> update(@PathVariable UUID id, @RequestBody AuthorDTO dto) {
+    public ResponseEntity<Object> update(@PathVariable UUID id, @RequestBody @Valid AuthorDTO dto) {
         try {
-            Author authorSearch = service.searchById(id)
+
+            Author author = service.searchById(id)
                     .orElseThrow(() -> new AuthorNotFoundException(id));
 
-            var author = authorSearch;
             author.setName(dto.name());
             author.setNationality(dto.nationality());
             author.setBiography(dto.biography());
@@ -101,7 +95,7 @@ public class AuthorController {
 
             service.update(author);
 
-            return ResponseEntity.ok("Author updated successfully");
+            return ResponseEntity.ok(mapper.toDTO(author));
 
         } catch (DuplicateRecordException e) {
             var errorDTO = ErrorResponse.conflict(e.getMessage());
