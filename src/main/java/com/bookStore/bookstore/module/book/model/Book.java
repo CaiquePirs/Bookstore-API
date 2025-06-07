@@ -1,6 +1,7 @@
 package com.bookStore.bookstore.module.book.model;
 
 
+import com.bookStore.bookstore.module.author.model.Author;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -17,11 +18,18 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID ID;
+    private UUID id;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String isbn;
+
+    @Column(nullable = false, length = 50)
     private String publisher;
+
+    @Column(nullable = false)
     private LocalDate publicationDate;
 
     @CreationTimestamp
@@ -31,7 +39,7 @@ public class Book {
     private LocalDateTime updateDate;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "authorId")
     @JsonBackReference
     private Author author;
 
