@@ -3,7 +3,7 @@ package com.bookStore.bookstore.module.author.service;
 import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.author.repository.AuthorRepository;
 import com.bookStore.bookstore.module.author.validator.ValidatorAuthor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -13,13 +13,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class AuthorService {
 
-    @Autowired
-    AuthorRepository repository;
-
-    @Autowired
-    ValidatorAuthor validator;
+   private final AuthorRepository repository;
+   private final ValidatorAuthor validator;
 
     public Author create(Author author){
         validator.validate(author);

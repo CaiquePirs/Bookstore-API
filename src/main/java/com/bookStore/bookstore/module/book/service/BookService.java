@@ -8,23 +8,17 @@ import com.bookStore.bookstore.module.book.mapper.BookMapper;
 import com.bookStore.bookstore.module.book.model.Book;
 import com.bookStore.bookstore.module.book.repository.BookRepository;
 import com.bookStore.bookstore.module.book.validator.ValidatorBook;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
-    @Autowired
-    private BookRepository repository;
-
-    @Autowired
-    private ValidatorBook validator;
-
-    @Autowired
-    private BookMapper mapper;
-
-    @Autowired
-    private AuthorService authorService;
+    private final BookRepository repository;
+    private final ValidatorBook validator;
+    private final BookMapper mapper;
+    private final AuthorService authorService;
 
     public Book create(BookDTO dto){
         Author author = authorService.searchById(dto.authorId())

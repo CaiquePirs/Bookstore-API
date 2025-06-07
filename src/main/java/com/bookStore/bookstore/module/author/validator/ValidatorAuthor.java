@@ -3,16 +3,16 @@ package com.bookStore.bookstore.module.author.validator;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.author.repository.AuthorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class ValidatorAuthor {
 
-    @Autowired
-    AuthorRepository repository;
+    private final AuthorRepository repository;
 
     public void validate(Author author){
         if(existsDuplicateAuthor(author)){
