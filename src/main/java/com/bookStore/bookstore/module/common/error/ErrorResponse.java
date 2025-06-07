@@ -1,4 +1,4 @@
-package com.bookStore.bookstore.module.author.DTO;
+package com.bookStore.bookstore.module.common.error;
 
 import org.springframework.http.HttpStatus;
 

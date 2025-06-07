@@ -1,10 +1,11 @@
-package com.bookStore.bookstore.module.author.controller.common;
+package com.bookStore.bookstore.module.common.handler;
 
-import com.bookStore.bookstore.module.author.DTO.ErrorField;
-import com.bookStore.bookstore.module.author.DTO.ErrorResponse;
-import com.bookStore.bookstore.module.author.exceptions.AuthorNotFoundException;
+import com.bookStore.bookstore.module.common.error.ErrorField;
+import com.bookStore.bookstore.module.common.error.ErrorResponse;
+import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,7 +31,7 @@ public class GlobalExceptionHandler {
                 .map(fe -> new ErrorField(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
 
-        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Erro de validação", listErrors);
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Validation error", listErrors);
     }
 
     @ExceptionHandler(DateTimeParseException.class)
@@ -43,11 +44,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthorNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleAuthorNotFoundException(AuthorNotFoundException e){
+    public ErrorResponse handleNotFoundException(AuthorNotFoundException e){
 
-        ErrorField errorField = new ErrorField("Id", "Author not found");
-        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), "ID author not found", List.of(errorField));
-
+        ErrorField errorField = new ErrorField("Id", "Not found");
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), "ID not found", List.of(errorField));
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
@@ -70,4 +70,13 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handlerMessageNotReadableException(HttpMessageNotReadableException e){
+      ErrorField errorField = new ErrorField("Error", "Invalid data type");
+
+      ErrorResponse error = ErrorResponse.standardResponse("Error Invalid data type ");
+
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+
+    }
 }
