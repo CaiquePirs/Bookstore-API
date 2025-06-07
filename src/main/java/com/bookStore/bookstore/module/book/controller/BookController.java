@@ -25,15 +25,9 @@ public class BookController implements GenericController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody @Valid BookDTO bookDTO){
-       try {
           Book book = service.create(bookDTO);
 
           var uri = generateHeaderLocation(book.getId());
           return ResponseEntity.created(uri).body(mapper.toDTO(book));
-
-       } catch (DuplicateRecordException e) {
-        var errorDTO = ErrorResponse.conflict(e.getMessage());
-        return ResponseEntity.status(errorDTO.status()).body(errorDTO);
-    }
     }
 }

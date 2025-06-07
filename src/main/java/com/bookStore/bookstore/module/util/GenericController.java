@@ -12,7 +12,6 @@ public interface GenericController {
                 .path("/{id}")
                 .buildAndExpand(id)
                 .toUri();
-
         return uri;
     }
 }

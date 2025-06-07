@@ -3,6 +3,7 @@ package com.bookStore.bookstore.module.common.handler;
 import com.bookStore.bookstore.module.common.error.ErrorField;
 import com.bookStore.bookstore.module.common.error.ErrorResponse;
 import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
+import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -71,6 +72,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handlerMessageNotReadableException(HttpMessageNotReadableException e){
       ErrorField errorField = new ErrorField("Error", "Invalid data type");
 
@@ -78,5 +80,11 @@ public class GlobalExceptionHandler {
 
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 
+    }
+
+    @ExceptionHandler(DuplicateRecordException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handlerDuplicateRecordException(DuplicateRecordException e){
+        return ErrorResponse.conflict(e.getMessage());
     }
 }

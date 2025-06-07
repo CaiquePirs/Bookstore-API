@@ -29,18 +29,11 @@ public class AuthorController implements GenericController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody @Valid AuthorDTO dto) {
-        try {
             Author author = mapper.toEntity(dto);
             service.create(author);
 
             var uri = generateHeaderLocation(author.getId());
             return ResponseEntity.created(uri).body(mapper.toDTO(author));
-
-        } catch (DuplicateRecordException e) {
-            var errorDTO = ErrorResponse.conflict(e.getMessage());
-            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
-        }
-
     }
 
     @GetMapping("{id}")
@@ -71,14 +64,11 @@ public class AuthorController implements GenericController {
                 .orElseThrow(() -> new AuthorNotFoundException(id));
 
         service.delete(author);
-
         return ResponseEntity.ok("Author deleted successfully");
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Object> update(@PathVariable UUID id, @RequestBody @Valid AuthorDTO dto) {
-        try {
-
             Author author = service.searchById(id)
                     .orElseThrow(() -> new AuthorNotFoundException(id));
 
@@ -88,14 +78,6 @@ public class AuthorController implements GenericController {
             author.setDateBirth(dto.dateBirth());
 
             service.update(author);
-
             return ResponseEntity.ok(mapper.toDTO(author));
-
-        } catch (DuplicateRecordException e) {
-            var errorDTO = ErrorResponse.conflict(e.getMessage());
-            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
-
-        }
-
     }
 }
