@@ -3,6 +3,7 @@ package com.bookStore.bookstore.module.book.DTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.ISBN;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public record BookDTO(
         String title,
 
         @NotBlank(message = "The book ISBN is required")
-        //@ISBN(message = "Enter a valid ISBN")
+        @ISBN(message = "Enter a valid ISBN")
         String isbn,
 
         @NotBlank(message = "The publisher book is required")
