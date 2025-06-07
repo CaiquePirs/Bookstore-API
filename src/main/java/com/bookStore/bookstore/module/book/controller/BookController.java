@@ -6,38 +6,30 @@ import com.bookStore.bookstore.module.book.model.Book;
 import com.bookStore.bookstore.module.book.service.BookService;
 import com.bookStore.bookstore.module.common.error.ErrorResponse;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
+import com.bookStore.bookstore.module.util.GenericController;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("/books")
-public class BookController {
+@RequiredArgsConstructor
+public class BookController implements GenericController {
 
-    @Autowired
-    private BookService service;
-
-    @Autowired
-    private BookMapper mapper;
+    private final BookService service;
+    private final BookMapper mapper;
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody @Valid BookDTO bookDTO){
        try {
           Book book = service.create(bookDTO);
 
-           URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                   .path("/{id}")
-                   .buildAndExpand(book.getId())
-                   .toUri();
-
-           return ResponseEntity.created(uri).body(mapper.toDTO(book));
+          var uri = generateHeaderLocation(book.getId());
+          return ResponseEntity.created(uri).body(mapper.toDTO(book));
 
        } catch (DuplicateRecordException e) {
         var errorDTO = ErrorResponse.conflict(e.getMessage());

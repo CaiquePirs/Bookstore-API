@@ -7,14 +7,13 @@ import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.author.service.AuthorService;
+import com.bookStore.bookstore.module.util.GenericController;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -22,13 +21,11 @@ import java.util.stream.Collectors;
 @Controller
 @RestController
 @RequestMapping("/authors")
-public class AuthorController {
+@RequiredArgsConstructor
+public class AuthorController implements GenericController {
 
-    @Autowired
-    private AuthorService service;
-
-    @Autowired
-    private AuthorMapper mapper;
+    private final AuthorService service;
+    private final AuthorMapper mapper;
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody @Valid AuthorDTO dto) {
@@ -36,10 +33,7 @@ public class AuthorController {
             Author author = mapper.toEntity(dto);
             service.create(author);
 
-            URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(author.getId())
-                    .toUri();
+            var uri = generateHeaderLocation(author.getId());
             return ResponseEntity.created(uri).body(mapper.toDTO(author));
 
         } catch (DuplicateRecordException e) {
