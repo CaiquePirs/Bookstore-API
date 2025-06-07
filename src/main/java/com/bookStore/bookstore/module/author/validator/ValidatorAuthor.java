@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.module.author.validator;
 
-import com.bookStore.bookstore.module.author.exceptions.DuplicateRecordException;
+import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.author.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +26,4 @@ public class ValidatorAuthor {
         return authorFound.isPresent() &&
                 !authorFound.get().getId().equals(author.getId());
     }
-
 }

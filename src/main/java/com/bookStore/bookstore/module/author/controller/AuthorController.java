@@ -1,10 +1,10 @@
 package com.bookStore.bookstore.module.author.controller;
 
 import com.bookStore.bookstore.module.author.DTO.AuthorDTO;
-import com.bookStore.bookstore.module.author.DTO.AuthorMapper;
-import com.bookStore.bookstore.module.author.DTO.ErrorResponse;
-import com.bookStore.bookstore.module.author.exceptions.AuthorNotFoundException;
-import com.bookStore.bookstore.module.author.exceptions.DuplicateRecordException;
+import com.bookStore.bookstore.module.author.mapper.AuthorMapper;
+import com.bookStore.bookstore.module.common.error.ErrorResponse;
+import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
+import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.author.service.AuthorService;
 import jakarta.validation.Valid;

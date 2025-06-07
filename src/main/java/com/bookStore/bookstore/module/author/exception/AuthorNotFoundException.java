@@ -1,4 +1,4 @@
-package com.bookStore.bookstore.module.author.exceptions;
+package com.bookStore.bookstore.module.author.exception;
 
 import java.util.UUID;
 
