@@ -77,7 +77,6 @@ public class GlobalExceptionHandler {
       ErrorField errorField = new ErrorField("Error", "Invalid data type");
 
       ErrorResponse error = ErrorResponse.standardResponse("Error Invalid data type ");
-
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 
     }
@@ -86,5 +85,15 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handlerDuplicateRecordException(DuplicateRecordException e){
         return ErrorResponse.conflict(e.getMessage());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handlerInternalError(RuntimeException e){
+        return new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "An unexpected error occurred",
+                List.of()
+        );
     }
 }
