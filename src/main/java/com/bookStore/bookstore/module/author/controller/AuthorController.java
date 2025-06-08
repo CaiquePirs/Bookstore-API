@@ -1,10 +1,9 @@
 package com.bookStore.bookstore.module.author.controller;
 
 import com.bookStore.bookstore.module.author.DTO.AuthorDTO;
+import com.bookStore.bookstore.module.author.DTO.AuthorResponseDTO;
 import com.bookStore.bookstore.module.author.mapper.AuthorMapper;
-import com.bookStore.bookstore.module.common.error.ErrorResponse;
 import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
-import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.author.service.AuthorService;
 import com.bookStore.bookstore.module.util.GenericController;
@@ -37,21 +36,21 @@ public class AuthorController implements GenericController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<AuthorDTO> searchAuthor(@PathVariable UUID id) {
+    public ResponseEntity<AuthorResponseDTO> searchAuthor(@PathVariable UUID id) {
         return service.searchById(id).map(author -> {
-            AuthorDTO dto = mapper.toDTO(author);
+            AuthorResponseDTO dto = mapper.toDTO(author);
 
             return ResponseEntity.ok(dto);
         }).orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<AuthorDTO>> filterSearch(@RequestParam(value = "name", required = false) String name,
+    public ResponseEntity<List<AuthorResponseDTO>> filterSearch(@RequestParam(value = "name", required = false) String name,
                                                         @RequestParam(value = "nacionality", required = false) String nationality) {
 
         List<Author> result = service.filterSearch(name, nationality);
 
-        List<AuthorDTO> authorDTOs = result.stream()
+        List<AuthorResponseDTO> authorDTOs = result.stream()
                 .map(author -> mapper.toDTO(author))
                 .collect(Collectors.toList());
 

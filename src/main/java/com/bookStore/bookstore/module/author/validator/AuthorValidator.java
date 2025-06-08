@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ValidatorAuthor {
+public class AuthorValidator {
 
     private final AuthorRepository repository;
 

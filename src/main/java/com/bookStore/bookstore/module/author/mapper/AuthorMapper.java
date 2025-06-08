@@ -1,6 +1,7 @@
 package com.bookStore.bookstore.module.author.mapper;
 
 import com.bookStore.bookstore.module.author.DTO.AuthorDTO;
+import com.bookStore.bookstore.module.author.DTO.AuthorResponseDTO;
 import com.bookStore.bookstore.module.author.model.Author;
 import org.mapstruct.Mapper;
 
@@ -8,5 +9,5 @@ import org.mapstruct.Mapper;
 public interface AuthorMapper {
 
     Author toEntity(AuthorDTO dto);
-    AuthorDTO toDTO(Author author);
+    AuthorResponseDTO toDTO(Author author);
 }

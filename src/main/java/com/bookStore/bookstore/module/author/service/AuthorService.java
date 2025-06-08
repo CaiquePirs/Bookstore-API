@@ -2,7 +2,7 @@ package com.bookStore.bookstore.module.author.service;
 
 import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.author.repository.AuthorRepository;
-import com.bookStore.bookstore.module.author.validator.ValidatorAuthor;
+import com.bookStore.bookstore.module.author.validator.AuthorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class AuthorService {
 
    private final AuthorRepository repository;
-   private final ValidatorAuthor validator;
+   private final AuthorValidator validator;
 
     public Author create(Author author){
         validator.validate(author);
