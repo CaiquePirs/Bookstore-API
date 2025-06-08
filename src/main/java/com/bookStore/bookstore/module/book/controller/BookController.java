@@ -25,7 +25,6 @@ public class BookController implements GenericController {
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody @Valid BookDTO bookDTO){
           Book book = service.create(bookDTO);
-
           var uri = generateHeaderLocation(book.getId());
           return ResponseEntity.created(uri).body(mapper.toDTO(book));
     }
@@ -36,7 +35,15 @@ public class BookController implements GenericController {
                 .map(book -> {
                     var dto = mapper.toDTO(book);
                     return ResponseEntity.ok(dto);
-
         }).orElseThrow(() -> new BookNotFoundException(id));
     }
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> deleteById(@PathVariable UUID id){
+        return service.searchById(id).
+                map(book -> {
+                    service.deleteById(id);
+                    return ResponseEntity.noContent().build();
+        }).orElseThrow(() -> new BookNotFoundException(id));
+    }
+
 }
