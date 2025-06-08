@@ -27,18 +27,27 @@ public class BookService {
         Author author = authorService.searchById(dto.authorId())
                 .orElseThrow(() -> new AuthorNotFoundException(dto.authorId()));
 
-        validator.validateIsbn(dto);
+        validator.validateIsbn(dto.isbn(), null);
         Book book = mapper.toEntity(dto);
         book.setAuthor(author);
 
         return repository.save(book);
     }
 
-    public Optional<Book> searchById(UUID id){
+    public Optional<Book> getById(UUID id){
         return repository.findById(id);
     }
 
     public void deleteById(UUID id){
         repository.deleteById(id);
     }
+
+    public void searchISBN(Book book){
+        validator.validateIsbn(book.getIsbn(), book.getId());
+    }
+
+    public Book update(Book book){
+        return repository.save(book);
+    }
+
 }
