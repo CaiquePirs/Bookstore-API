@@ -1,5 +1,6 @@
 package com.bookStore.bookstore.module.common.handler;
 
+import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
 import com.bookStore.bookstore.module.common.error.ErrorField;
 import com.bookStore.bookstore.module.common.error.ErrorResponse;
 import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
@@ -22,6 +23,16 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private ResponseEntity<ErrorResponse> buildNotFoundResponse(String field, String message) {
+        ErrorField errorField = new ErrorField(field, message);
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                message,
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -31,7 +42,6 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(fe -> new ErrorField(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
-
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Validation error", listErrors);
     }
 
@@ -43,21 +53,19 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Error converting date", List.of(errorField));
     }
 
-    @ExceptionHandler(AuthorNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(AuthorNotFoundException e){
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBookNotFound(BookNotFoundException e) {
+        return buildNotFoundResponse("Id", "Book not found");
+    }
 
-        ErrorField errorField = new ErrorField("Id", "Not found");
-        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), "ID not found", List.of(errorField));
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorNotFound(AuthorNotFoundException e) {
+        return buildNotFoundResponse("Id", "Author not found");
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NoHandlerFoundException e) {
-
-        ErrorField errorField = new ErrorField("Url", "URL not found");
-        ErrorResponse error = ErrorResponse.notFound(errorField.error());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return buildNotFoundResponse("Url", "Url not found");
 
     }
 
@@ -68,7 +76,6 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = new ErrorResponse(HttpStatus.METHOD_NOT_ALLOWED.value(), "Method not allowed for this endpoint.", List.of(errorField));
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(error);
-
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
