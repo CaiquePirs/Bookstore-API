@@ -7,16 +7,19 @@ import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.book.mapper.BookMapper;
 import com.bookStore.bookstore.module.book.model.Book;
 import com.bookStore.bookstore.module.book.repository.BookRepository;
-import com.bookStore.bookstore.module.book.validator.ValidatorBook;
+import com.bookStore.bookstore.module.book.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class BookService {
 
     private final BookRepository repository;
-    private final ValidatorBook validator;
+    private final BookValidator validator;
     private final BookMapper mapper;
     private final AuthorService authorService;
 
@@ -29,6 +32,9 @@ public class BookService {
         book.setAuthor(author);
 
         return repository.save(book);
+    }
 
+    public Optional<Book> searchById(UUID id){
+        return repository.findById(id);
     }
 }
