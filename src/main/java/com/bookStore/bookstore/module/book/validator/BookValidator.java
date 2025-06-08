@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ValidatorBook {
+public class BookValidator {
     private final BookRepository repository;
 
     public void validateIsbn(BookDTO dto){
