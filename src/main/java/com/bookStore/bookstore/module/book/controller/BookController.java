@@ -11,9 +11,9 @@ import com.bookStore.bookstore.module.book.service.BookService;
 import com.bookStore.bookstore.module.util.GenericController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.UUID;
 
 @RestController
@@ -33,13 +33,29 @@ public class BookController implements GenericController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ResponseBookDTO> searchBook(@PathVariable UUID id){
+    public ResponseEntity<ResponseBookDTO> searchBookById(@PathVariable UUID id){
         return service.getById(id)
                 .map(book -> {
                     var dto = mapper.toDTO(book);
                     return ResponseEntity.ok(dto);
         }).orElseThrow(() -> new BookNotFoundException(id));
     }
+
+    @GetMapping
+    public ResponseEntity<Page<ResponseBookDTO>> searchBookByQuery(
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "isbn", required = false) String isbn,
+            @RequestParam(value = "publisher", required = false) String publisher,
+            @RequestParam(value = "author", required = false) String author,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size-page", defaultValue = "10") Integer sizePage){
+
+        Page<Book> pageResult = service.searchBooksByQuery(title, isbn, publisher, author, page, sizePage);
+        Page<ResponseBookDTO> result = pageResult.map(mapper::toDTO);
+        return ResponseEntity.ok(result);
+    }
+
+
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteById(@PathVariable UUID id){
         return service.getById(id).
