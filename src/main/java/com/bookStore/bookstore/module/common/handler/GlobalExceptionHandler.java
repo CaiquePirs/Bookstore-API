@@ -5,6 +5,7 @@ import com.bookStore.bookstore.module.common.error.ErrorField;
 import com.bookStore.bookstore.module.common.error.ErrorResponse;
 import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
+import com.bookStore.bookstore.module.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -61,6 +62,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthorNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleAuthorNotFound(AuthorNotFoundException e) {
         return buildNotFoundResponse("Id", "Author not found");
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
+        return buildNotFoundResponse("Id", "User not found");
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
