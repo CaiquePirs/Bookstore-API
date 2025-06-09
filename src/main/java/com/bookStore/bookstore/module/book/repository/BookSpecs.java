@@ -1,4 +1,4 @@
-package com.bookStore.bookstore.module.author.repository;
+package com.bookStore.bookstore.module.book.repository;
 
 import com.bookStore.bookstore.module.book.model.Book;
 import org.springframework.data.jpa.domain.Specification;
