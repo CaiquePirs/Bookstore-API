@@ -55,7 +55,7 @@ public class UserController implements GenericController {
     public ResponseEntity<String> delete(@PathVariable UUID id){
        return service.searchById(id).map(user -> {
            service.delete(id);
-           return ResponseEntity.ok("User deleted sucefully");
+           return ResponseEntity.ok("User deleted successfully");
        }).orElseThrow(() -> new UserNotFoundException(id));
     }
 
