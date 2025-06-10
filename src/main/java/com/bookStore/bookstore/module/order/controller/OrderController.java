@@ -25,4 +25,10 @@ public class OrderController implements GenericController {
         return ResponseEntity.created(uri).body(orderResponse);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<OrderResponseDTO> searchById(@PathVariable UUID id){
+        var orderResponseDto = service.searchById(id);
+        return ResponseEntity.ok(orderResponseDto);
+    }
+
 }
