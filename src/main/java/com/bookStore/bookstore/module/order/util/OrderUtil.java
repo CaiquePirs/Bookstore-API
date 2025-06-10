@@ -1,4 +1,4 @@
-package com.bookStore.bookstore.module.order.validate;
+package com.bookStore.bookstore.module.order.util;
 
 import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
 import com.bookStore.bookstore.module.book.exception.BookUnavailableException;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class OrderValidate {
+public class OrderUtil {
 
     private final BookService bookService;
     private final UserService userService;
