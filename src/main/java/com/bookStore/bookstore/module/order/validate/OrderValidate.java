@@ -4,6 +4,7 @@ import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
 import com.bookStore.bookstore.module.book.exception.BookUnavailableException;
 import com.bookStore.bookstore.module.book.service.BookService;
 import com.bookStore.bookstore.module.order.DTO.OrderDTO;
+import com.bookStore.bookstore.module.order.DTO.OrderResponseDTO;
 import com.bookStore.bookstore.module.order.mapper.OrderMapper;
 import com.bookStore.bookstore.module.order.model.Order;
 import com.bookStore.bookstore.module.order.repository.OrderRepository;
@@ -36,6 +37,16 @@ public class OrderValidate {
         order.setBook(bookId);
         order.setUser(userId);
         return  order;
+    }
 
+    public OrderResponseDTO createOrderResponseDTO(Order order){
+        OrderResponseDTO dto = new OrderResponseDTO(
+                order.getId(),
+                order.getBook().getTitle(),
+                order.getUser().getUsername(),
+                order.getUser().getEmail(),
+                order.getCreationTimestamp(),
+                order.statusOrder());
+        return dto;
     }
 }
