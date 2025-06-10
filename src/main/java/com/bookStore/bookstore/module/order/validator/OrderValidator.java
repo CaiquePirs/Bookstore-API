@@ -1,10 +1,9 @@
-package com.bookStore.bookstore.module.order.util;
+package com.bookStore.bookstore.module.order.validator;
 
 import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
 import com.bookStore.bookstore.module.book.exception.BookUnavailableException;
 import com.bookStore.bookstore.module.book.service.BookService;
 import com.bookStore.bookstore.module.order.DTO.OrderDTO;
-import com.bookStore.bookstore.module.order.DTO.OrderResponseDTO;
 import com.bookStore.bookstore.module.order.mapper.OrderMapper;
 import com.bookStore.bookstore.module.order.model.Order;
 import com.bookStore.bookstore.module.order.repository.OrderRepository;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class OrderUtil {
+public class OrderValidator {
 
     private final BookService bookService;
     private final UserService userService;
@@ -37,16 +36,5 @@ public class OrderUtil {
         order.setBook(bookId);
         order.setUser(userId);
         return  order;
-    }
-
-    public OrderResponseDTO createOrderResponseDTO(Order order){
-        OrderResponseDTO dto = new OrderResponseDTO(
-                order.getId(),
-                order.getBook().getTitle(),
-                order.getUser().getUsername(),
-                order.getUser().getEmail(),
-                order.getCreationTimestamp(),
-                order.statusOrder());
-        return dto;
     }
 }
