@@ -6,6 +6,7 @@ import com.bookStore.bookstore.module.common.error.ErrorField;
 import com.bookStore.bookstore.module.common.error.ErrorResponse;
 import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
+import com.bookStore.bookstore.module.order.exception.OrderNotFoundException;
 import com.bookStore.bookstore.module.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +51,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DateTimeParseException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorResponse handleDateTimeParseException(DateTimeParseException e) {
-
         ErrorField errorField = new ErrorField("date", "Invalid date format. Use default: yyyy-MM-dd.");
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Error converting date", List.of(errorField));
     }
@@ -70,6 +70,11 @@ public class GlobalExceptionHandler {
         return buildNotFoundResponse("Id", "User not found");
     }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlerOrderNotFound(OrderNotFoundException e){
+        return buildNotFoundResponse("Id", "Order not found");
+    }
+
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NoHandlerFoundException e) {
         return buildNotFoundResponse("Url", "Url not found");
@@ -84,7 +89,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handlerMethodNotSupported(HttpRequestMethodNotSupportedException e){
 
         ErrorField errorField = new ErrorField("URL", "Method Not Allowed");
-
         ErrorResponse error = new ErrorResponse(HttpStatus.METHOD_NOT_ALLOWED.value(), "Method not allowed for this endpoint.", List.of(errorField));
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(error);
     }
@@ -93,7 +97,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handlerMessageNotReadableException(HttpMessageNotReadableException e){
       ErrorField errorField = new ErrorField("Error", "Invalid data type");
-
       ErrorResponse error = ErrorResponse.standardResponse("Error Invalid data type ");
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 
