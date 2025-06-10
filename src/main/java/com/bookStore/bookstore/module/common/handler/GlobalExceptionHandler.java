@@ -1,6 +1,7 @@
 package com.bookStore.bookstore.module.common.handler;
 
 import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
+import com.bookStore.bookstore.module.book.exception.BookUnavailableException;
 import com.bookStore.bookstore.module.common.error.ErrorField;
 import com.bookStore.bookstore.module.common.error.ErrorResponse;
 import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
@@ -72,7 +73,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NoHandlerFoundException e) {
         return buildNotFoundResponse("Url", "Url not found");
+    }
 
+    @ExceptionHandler(BookUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handlerBookUnavaiable(BookUnavailableException e){
+        return buildNotFoundResponse("Book", "This book is already loaned");
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

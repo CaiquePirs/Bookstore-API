@@ -35,7 +35,7 @@ public class BookService {
         validator.validateIsbn(dto.isbn(), null);
         Book book = mapper.toEntity(dto);
         book.setAuthor(author);
-
+        book.setStatus(true);
         return repository.save(book);
     }
 
@@ -69,7 +69,6 @@ public class BookService {
         }
 
         Pageable pagerequest = PageRequest.of(page, sizePage);
-
         return repository.findAll(specs, pagerequest);
     }
 

@@ -32,6 +32,9 @@ public class Book {
     @Column(nullable = false)
     private LocalDate publicationDate;
 
+    @Column(nullable = false)
+    private boolean status = true;
+
     @CreationTimestamp
     private LocalDateTime creationDate;
 
@@ -43,13 +46,18 @@ public class Book {
     @JsonBackReference
     private Author author;
 
+    public String statusBook(){
+        return status ? "Available" : "Unavailable";
+    }
+
     public Book(){}
 
-    public Book(String title, String isbn, String publisher, LocalDate publicationDate, Author author){
+    public Book(String title, String isbn, String publisher, LocalDate publicationDate, Author author, boolean status){
         this.title = title;
         this.isbn = isbn;
         this.publisher = publisher;
         this.publicationDate = publicationDate;
         this.author = author;
+        this.status = status;
     }
 }
