@@ -31,4 +31,10 @@ public class OrderController implements GenericController {
         return ResponseEntity.ok(orderResponseDto);
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> delete(@PathVariable UUID id){
+        service.delete(id);
+        return ResponseEntity.ok("Order deleted successfully");
+    }
+
 }

@@ -31,6 +31,12 @@ public class OrderService {
         return orderDTO;
     }
 
+    public void delete(UUID id){
+        var order = repository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+        repository.deleteById(id);
+    }
+
 
 
 
