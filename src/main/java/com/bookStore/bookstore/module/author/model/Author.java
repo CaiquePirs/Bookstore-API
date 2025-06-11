@@ -1,4 +1,4 @@
-    package com.bookStore.bookstore.module.author.model;
+package com.bookStore.bookstore.module.author.model;
 
 import com.bookStore.bookstore.module.book.model.Book;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Data
+@Table(name = "authors")
 public class Author {
 
     @Id
@@ -35,17 +36,10 @@ public class Author {
     @UpdateTimestamp
     private LocalDateTime update;
 
-    public Author(){}
-
-    public Author(String name, String nationality, String biography, LocalDate dateBirth){
-        this.name = name;
-        this.nationality = nationality;
-        this.biography = biography;
-        this.dateBirth = dateBirth;
-    }
-
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Book> books = new ArrayList<>();
+
+    public Author(){}
 
 }
