@@ -20,8 +20,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean status = true;
+    private StatusOrder status;
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
@@ -37,10 +38,6 @@ public class Order {
 
     @UpdateTimestamp
     private LocalDateTime updateTimeStamp;
-
-    public String statusOrder(){
-        return status ? "Loaned" : "Returned";
-    }
 
     public Order(){}
 

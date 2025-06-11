@@ -1,6 +1,7 @@
 package com.bookStore.bookstore.module.book.service;
 
 import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
+import com.bookStore.bookstore.module.book.model.StatusBook;
 import com.bookStore.bookstore.module.book.repository.BookSpecs;
 import com.bookStore.bookstore.module.author.service.AuthorService;
 import com.bookStore.bookstore.module.book.DTO.BookDTO;
@@ -35,7 +36,7 @@ public class BookService {
         validator.validateIsbn(dto.isbn(), null);
         Book book = mapper.toEntity(dto);
         book.setAuthor(author);
-        book.setStatus(true);
+        book.setStatus(StatusBook.AVAILABLE);
         return repository.save(book);
     }
 
