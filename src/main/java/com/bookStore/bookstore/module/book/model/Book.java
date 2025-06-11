@@ -1,7 +1,7 @@
 package com.bookStore.bookstore.module.book.model;
 
-
 import com.bookStore.bookstore.module.author.model.Author;
+import com.bookStore.bookstore.module.order.model.Order;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,10 +10,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Data
+@Table(name = "books")
 public class Book {
 
     @Id
@@ -42,9 +45,12 @@ public class Book {
     private LocalDateTime updateDate;
 
     @ManyToOne
-    @JoinColumn(name = "authorId")
+    @JoinColumn(name = "author_id")
     @JsonBackReference
     private Author author;
+
+    @OneToMany(mappedBy = "book")
+    private List<Order> orders = new ArrayList<>();
 
     public String statusBook(){
         return status ? "Available" : "Unavailable";
@@ -52,12 +58,4 @@ public class Book {
 
     public Book(){}
 
-    public Book(String title, String isbn, String publisher, LocalDate publicationDate, Author author, boolean status){
-        this.title = title;
-        this.isbn = isbn;
-        this.publisher = publisher;
-        this.publicationDate = publicationDate;
-        this.author = author;
-        this.status = status;
-    }
 }

@@ -2,6 +2,7 @@ package com.bookStore.bookstore.module.order.model;
 
 import com.bookStore.bookstore.module.user.model.User;
 import com.bookStore.bookstore.module.book.model.Book;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,12 +23,13 @@ public class Order {
     @Column(nullable = false)
     private boolean status = true;
 
-    @OneToOne
-    @JoinColumn(name = "bookId")
+    @ManyToOne
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    @OneToOne
-    @JoinColumn(name = "userId")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @CreationTimestamp
@@ -41,11 +43,5 @@ public class Order {
     }
 
     public Order(){}
-
-    public Order(boolean status, Book book, User user){
-        this.status = status;
-        this.book = book;
-        this.user = user;
-    }
 
 }
