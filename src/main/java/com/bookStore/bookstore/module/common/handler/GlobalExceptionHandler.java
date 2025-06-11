@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OrderReturnedException.class)
     public ResponseEntity<ErrorResponse> handlerOrderLoaned(OrderReturnedException e){
-        return buildNotFoundResponse("Error", "This order cannot be updated because it has already been returned");
+        return buildNotFoundResponse("Error", "This order has already been returned");
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
