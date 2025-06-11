@@ -22,20 +22,22 @@ public class OrderService {
     public OrderResponseDTO create(OrderDTO dto){
         var order = validate.validateOrder(dto);
         repository.save(order);
-        var orderDTO = generate.createOrderResponseDTO(order);
-        return orderDTO;
+        return generate.createOrderResponseDTO(order);
     }
 
     public OrderResponseDTO searchById(UUID id){
         var order = repository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id));
-        var orderDTO = generate.createOrderResponseDTO(order);
-        return orderDTO;
+        return generate.createOrderResponseDTO(order);
     }
 
     public void delete(UUID id){
-        repository.findById(id)
+      var order = repository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id));
+
+        if(order.getStatus().equals(StatusOrder.LOANED)){
+            throw new OrderLoanedException();
+        }
         repository.deleteById(id);
     }
 
