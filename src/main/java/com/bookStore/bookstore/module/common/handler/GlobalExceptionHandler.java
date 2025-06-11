@@ -8,6 +8,7 @@ import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.order.exception.OrderLoanedException;
 import com.bookStore.bookstore.module.order.exception.OrderNotFoundException;
+import com.bookStore.bookstore.module.order.exception.OrderReturnedException;
 import com.bookStore.bookstore.module.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -89,6 +90,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OrderLoanedException.class)
     public ResponseEntity<ErrorResponse> handlerOrderLoaned(OrderLoanedException e){
         return buildNotFoundResponse("Error", "Error deleting: This order is active");
+    }
+
+    @ExceptionHandler(OrderReturnedException.class)
+    public ResponseEntity<ErrorResponse> handlerOrderLoaned(OrderReturnedException e){
+        return buildNotFoundResponse("Error", "This order cannot be updated because it has already been returned");
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
