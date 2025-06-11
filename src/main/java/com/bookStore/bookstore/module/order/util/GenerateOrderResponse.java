@@ -14,7 +14,7 @@ public class GenerateOrderResponse {
                 order.getUser().getUsername(),
                 order.getUser().getEmail(),
                 order.getCreationTimestamp(),
-                order.statusOrder());
+                order.getStatus());
         return dto;
     }
 }

@@ -31,6 +31,14 @@ public class OrderController implements GenericController {
         return ResponseEntity.ok(orderResponseDto);
     }
 
+    @PutMapping("{id}")
+    public ResponseEntity<OrderResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid OrderDTO dto){
+        var orderResponse = service.update(id, dto);
+        var uri = generateHeaderLocation(id);
+        return ResponseEntity.created(uri).body(orderResponse);
+
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<String> delete(@PathVariable UUID id){
         service.delete(id);
