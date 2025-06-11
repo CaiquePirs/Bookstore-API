@@ -4,6 +4,7 @@ import com.bookStore.bookstore.module.book.model.Book;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
@@ -33,8 +34,11 @@ public class Author {
     @Column(nullable = false)
     private LocalDate dateBirth;
 
+    @CreationTimestamp
+    private LocalDateTime CreationTimestamp;
+
     @UpdateTimestamp
-    private LocalDateTime update;
+    private LocalDateTime UpdateTimestamp;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
