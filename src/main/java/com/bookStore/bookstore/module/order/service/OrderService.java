@@ -1,6 +1,7 @@
 package com.bookStore.bookstore.module.order.service;
 
 import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
+import com.bookStore.bookstore.module.book.model.StatusBook;
 import com.bookStore.bookstore.module.book.service.BookService;
 import com.bookStore.bookstore.module.order.DTO.OrderDTO;
 import com.bookStore.bookstore.module.order.DTO.OrderResponseDTO;
@@ -80,5 +81,18 @@ public class OrderService {
 
         repository.save(existingOrder);
         return generate.createOrderResponseDTO(existingOrder);
+    }
+
+    public void returnedOrder(UUID id){
+        var order = repository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+
+        if(order.getStatus().equals(StatusOrder.RETURNED)){
+            throw new OrderReturnedException();
+        }
+
+        order.getBook().setStatus(StatusBook.AVAILABLE);
+        order.setStatus(StatusOrder.RETURNED);
+        repository.save(order);
     }
 }
