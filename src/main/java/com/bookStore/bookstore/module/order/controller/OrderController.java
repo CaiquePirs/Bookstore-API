@@ -25,6 +25,12 @@ public class OrderController implements GenericController {
         return ResponseEntity.created(uri).body(orderResponse);
     }
 
+    @PostMapping("/{id}/return")
+    public ResponseEntity<Void> returnOrder(@PathVariable UUID id){
+        service.returnedOrder(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<OrderResponseDTO> searchById(@PathVariable UUID id){
         var orderResponseDto = service.searchById(id);
@@ -40,9 +46,9 @@ public class OrderController implements GenericController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id){
+    public ResponseEntity<Void> delete(@PathVariable UUID id){
         service.delete(id);
-        return ResponseEntity.ok("Order deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 
 }
