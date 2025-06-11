@@ -1,6 +1,7 @@
 package com.bookStore.bookstore.module.user.model;
 
-
+import com.bookStore.bookstore.module.order.model.Order;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,6 +9,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -37,12 +40,9 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime UpdateTimestamp;
 
-    public User(){}
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Order> orders = new ArrayList<>();
 
-    public User(String username, String email, String password, LocalDate dateBirth){
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.dateBirth = dateBirth;
-    }
+    public User(){}
 }
