@@ -64,6 +64,12 @@ public class AuthorService {
         return repository.findAll(specs, pageRequest);
     }
 
+    public void delete(UUID id){
+        var author = searchById(id);
+        author.setStatus(StatusAuthor.DELETED_AT);
+        repository.save(author);
+    }
+
     public Author update(UUID id, AuthorDTO dto){
         var author = searchById(id);
 

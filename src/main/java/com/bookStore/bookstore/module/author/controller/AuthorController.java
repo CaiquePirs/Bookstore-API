@@ -55,12 +55,9 @@ public class AuthorController implements GenericController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteAuthor(@PathVariable UUID id) {
-        var author = service.searchById(id)
-                .orElseThrow(() -> new AuthorNotFoundException(id));
-
-        service.delete(author);
-        return ResponseEntity.ok("Author deleted successfully");
+    public ResponseEntity<Void> deleteAuthor(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
