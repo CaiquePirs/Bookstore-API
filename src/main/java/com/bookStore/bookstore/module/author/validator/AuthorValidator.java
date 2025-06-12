@@ -22,7 +22,6 @@ public class AuthorValidator {
 
     private boolean existsDuplicateAuthor(Author author) {
         Optional<Author> authorFound = repository.findAuthorByName(author.getName());
-
         return authorFound.isPresent() &&
                 !authorFound.get().getId().equals(author.getId());
     }

@@ -67,16 +67,9 @@ public class AuthorController implements GenericController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> update(@PathVariable UUID id, @RequestBody @Valid AuthorDTO dto) {
-            Author author = service.searchById(id)
-                    .orElseThrow(() -> new AuthorNotFoundException(id));
-
-            author.setName(dto.name());
-            author.setNationality(dto.nationality());
-            author.setBiography(dto.biography());
-            author.setDateBirth(dto.dateBirth());
-
-            service.update(author);
-            return ResponseEntity.ok(mapper.toDTO(author));
+    public ResponseEntity<AuthorResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid AuthorDTO dto) {
+            var author = service.update(id, dto);
+            var uri = generateHeaderLocation(id);
+            return ResponseEntity.created(uri).body(mapper.toDTO(author));
     }
 }

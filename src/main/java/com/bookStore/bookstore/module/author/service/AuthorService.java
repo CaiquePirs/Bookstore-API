@@ -50,8 +50,24 @@ public class AuthorService {
     }
 
     public void update(Author author){
+
+    public Author update(UUID id, AuthorDTO dto){
+        var author = searchById(id);
+
+        if (dto.name() != null) {
+            author.setName(dto.name());
+        }
+        if (dto.nationality() != null) {
+            author.setNationality(dto.nationality());
+        }
+        if (dto.biography() != null) {
+            author.setBiography(dto.biography());
+        }
+        if (dto.dateBirth() != null) {
+            author.setDateBirth(dto.dateBirth());
+        }
         validator.validate(author);
-        repository.save(author);
+        return repository.save(author);
     }
 
 }
