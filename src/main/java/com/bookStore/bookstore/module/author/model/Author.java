@@ -34,6 +34,8 @@ public class Author {
     @Column(nullable = false)
     private LocalDate dateBirth;
 
+    private StatusAuthor status;
+
     @CreationTimestamp
     private LocalDateTime CreationTimestamp;
 
