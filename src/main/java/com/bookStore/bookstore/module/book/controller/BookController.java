@@ -1,10 +1,7 @@
 package com.bookStore.bookstore.module.book.controller;
 
-import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
-import com.bookStore.bookstore.module.author.service.AuthorService;
 import com.bookStore.bookstore.module.book.DTO.BookDTO;
 import com.bookStore.bookstore.module.book.DTO.ResponseBookDTO;
-import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
 import com.bookStore.bookstore.module.book.mapper.BookMapper;
 import com.bookStore.bookstore.module.book.model.Book;
 import com.bookStore.bookstore.module.book.model.StatusBook;
@@ -24,10 +21,9 @@ public class BookController implements GenericController {
 
     private final BookService service;
     private final BookMapper mapper;
-    private final AuthorService authorService;
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody @Valid BookDTO bookDTO){
+    public ResponseEntity<ResponseBookDTO> create(@RequestBody @Valid BookDTO bookDTO){
           Book book = service.create(bookDTO);
           var uri = generateHeaderLocation(book.getId());
           return ResponseEntity.created(uri).body(mapper.toDTO(book));
@@ -45,10 +41,11 @@ public class BookController implements GenericController {
             @RequestParam(value = "isbn", required = false) String isbn,
             @RequestParam(value = "publisher", required = false) String publisher,
             @RequestParam(value = "author", required = false) String author,
+            @RequestParam(value = "status", required = false) StatusBook status,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size-page", defaultValue = "10") Integer sizePage){
 
-        Page<Book> pageResult = service.searchBooksByQuery(title, isbn, publisher, author, page, sizePage);
+        Page<Book> pageResult = service.searchBooksByQuery(title, isbn, publisher, author, status, page, sizePage);
         Page<ResponseBookDTO> result = pageResult.map(mapper::toDTO);
         return ResponseEntity.ok(result);
     }

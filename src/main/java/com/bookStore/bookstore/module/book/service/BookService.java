@@ -59,6 +59,7 @@ public class BookService {
                                          String isbn,
                                          String publisher,
                                          String author,
+                                         StatusBook status,
                                          Integer page,
                                          Integer sizePage) {
 
@@ -80,8 +81,14 @@ public class BookService {
             specs = specs.and(BookSpecs.authorNameLike(author));
         }
 
-        Pageable pagerequest = PageRequest.of(page, sizePage);
-        return repository.findAll(specs, pagerequest);
+        if (status != null) {
+            specs = specs.and((root, query, cb) -> cb.equal(root.get("status"), status));
+        } else {
+            specs = specs.and((root, query, cb) -> cb.notEqual(root.get("status"), StatusBook.DELETED_AT));
+        }
+
+        Pageable pageRequest = PageRequest.of(page, sizePage);
+        return repository.findAll(specs, pageRequest);
     }
 
 
