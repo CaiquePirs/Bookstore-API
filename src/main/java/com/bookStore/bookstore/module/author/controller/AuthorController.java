@@ -36,11 +36,8 @@ public class AuthorController implements GenericController {
 
     @GetMapping("{id}")
     public ResponseEntity<AuthorResponseDTO> searchAuthor(@PathVariable UUID id) {
-        return service.searchById(id).map(author -> {
-            AuthorResponseDTO dto = mapper.toDTO(author);
-
-            return ResponseEntity.ok(dto);
-        }).orElseThrow(() -> new AuthorNotFoundException(id));
+        var author = service.searchById(id);
+        return ResponseEntity.ok(mapper.toDTO(author));
     }
 
     @GetMapping

@@ -34,8 +34,7 @@ public class BookService {
     private final AuthorService authorService;
 
     public Book create(BookDTO dto){
-        Author author = authorService.searchById(dto.authorId())
-                .orElseThrow(() -> new AuthorNotFoundException(dto.authorId()));
+        var author = authorService.searchById(dto.authorId());
 
         validator.validateIsbn(dto.isbn(), null);
         Book book = mapper.toEntity(dto);
@@ -124,8 +123,7 @@ public class BookService {
             throw new BookUnavailableException("This book has already been deleted");
         }
 
-        var author = authorService.searchById(dto.authorId())
-                .orElseThrow(() -> new AuthorNotFoundException(dto.authorId()));
+        var author = authorService.searchById(dto.authorId());
 
         book.setIsbn(dto.isbn());
         book.setTitle(dto.title());

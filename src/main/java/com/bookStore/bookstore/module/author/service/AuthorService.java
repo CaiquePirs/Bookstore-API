@@ -24,8 +24,13 @@ public class AuthorService {
         return repository.save(author);
     }
 
-    public Optional<Author> searchById(UUID id){
-        return repository.findById(id);
+    public Author searchById(UUID id){
+        return repository.findById(id).map(author -> {
+            if(author.getStatus().equals(StatusAuthor.DELETED_AT)){
+                throw new AuthorDeletedException("This author has been deleted from the system");
+            }
+            return author;
+        }).orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     public Page<Author> filterSearch(String name,
