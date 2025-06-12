@@ -1,15 +1,20 @@
 package com.bookStore.bookstore.module.author.service;
 
+import com.bookStore.bookstore.module.author.DTO.AuthorDTO;
+import com.bookStore.bookstore.module.author.exception.AuthorDeletedException;
+import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
+import com.bookStore.bookstore.module.author.mapper.AuthorMapper;
 import com.bookStore.bookstore.module.author.model.Author;
+import com.bookStore.bookstore.module.author.model.StatusAuthor;
 import com.bookStore.bookstore.module.author.repository.AuthorRepository;
+import com.bookStore.bookstore.module.author.repository.AuthorSpecs;
 import com.bookStore.bookstore.module.author.validator.AuthorValidator;
+import com.bookStore.bookstore.module.book.model.StatusBook;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,9 +23,12 @@ public class AuthorService {
 
    private final AuthorRepository repository;
    private final AuthorValidator validator;
+   private final AuthorMapper mapper;
 
-    public Author create(Author author){
+    public Author create(AuthorDTO dto){
+        Author author = mapper.toEntity(dto);
         validator.validate(author);
+        author.setStatus(StatusAuthor.ACTIVE);
         return repository.save(author);
     }
 

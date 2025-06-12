@@ -26,12 +26,10 @@ public class AuthorController implements GenericController {
     private final AuthorMapper mapper;
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody @Valid AuthorDTO dto) {
-            Author author = mapper.toEntity(dto);
-            service.create(author);
-
-            var uri = generateHeaderLocation(author.getId());
-            return ResponseEntity.created(uri).body(mapper.toDTO(author));
+    public ResponseEntity<AuthorResponseDTO> create(@RequestBody @Valid AuthorDTO dto) {
+           var author = service.create(dto);
+           var uri = generateHeaderLocation(author.getId());
+           return ResponseEntity.created(uri).body(mapper.toDTO(author));
     }
 
     @GetMapping("{id}")
