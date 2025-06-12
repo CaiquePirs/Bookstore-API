@@ -86,7 +86,21 @@ public class BookService {
 
 
     public void deleteById(UUID id){
-        repository.deleteById(id);
+        var existBook = repository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
+
+        var existOrderActive = orderRepository.existsByBookAndStatusNot(existBook, StatusOrder.RETURNED);
+
+        if (existOrderActive) {
+            throw new BookUnavailableException("This book cannot be deleted because it has an active order");
+        }
+
+        if(existBook.getStatus().equals(StatusBook.DELETED_AT)){
+            throw new BookUnavailableException("This book has already been deleted");
+        }
+
+        existBook.setStatus(StatusBook.DELETED_AT);
+        repository.save(existBook);
     }
 
     public void searchISBN(Book book){

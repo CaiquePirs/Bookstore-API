@@ -7,6 +7,7 @@ import com.bookStore.bookstore.module.book.DTO.ResponseBookDTO;
 import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
 import com.bookStore.bookstore.module.book.mapper.BookMapper;
 import com.bookStore.bookstore.module.book.model.Book;
+import com.bookStore.bookstore.module.book.model.StatusBook;
 import com.bookStore.bookstore.module.book.service.BookService;
 import com.bookStore.bookstore.module.util.GenericController;
 import jakarta.validation.Valid;
@@ -52,14 +53,10 @@ public class BookController implements GenericController {
         return ResponseEntity.ok(result);
     }
 
-
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteById(@PathVariable UUID id){
-        return service.getById(id).
-                map(book -> {
-                    service.deleteById(id);
-                    return ResponseEntity.noContent().build();
-        }).orElseThrow(() -> new BookNotFoundException(id));
+    public ResponseEntity<Void> deleteById(@PathVariable UUID id){
+        service.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
