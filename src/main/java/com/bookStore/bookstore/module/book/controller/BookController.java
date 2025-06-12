@@ -34,11 +34,8 @@ public class BookController implements GenericController {
 
     @GetMapping("{id}")
     public ResponseEntity<ResponseBookDTO> searchBookById(@PathVariable UUID id){
-        return service.getById(id)
-                .map(book -> {
-                    var dto = mapper.toDTO(book);
-                    return ResponseEntity.ok(dto);
-        }).orElseThrow(() -> new BookNotFoundException(id));
+        var book = service.getById(id);
+        return ResponseEntity.ok(mapper.toDTO(book));
     }
 
     @GetMapping

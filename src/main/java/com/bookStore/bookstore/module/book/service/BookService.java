@@ -1,6 +1,8 @@
 package com.bookStore.bookstore.module.book.service;
 
 import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
+import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
+import com.bookStore.bookstore.module.book.exception.BookUnavailableException;
 import com.bookStore.bookstore.module.book.model.StatusBook;
 import com.bookStore.bookstore.module.book.repository.BookSpecs;
 import com.bookStore.bookstore.module.author.service.AuthorService;
@@ -10,6 +12,8 @@ import com.bookStore.bookstore.module.book.mapper.BookMapper;
 import com.bookStore.bookstore.module.book.model.Book;
 import com.bookStore.bookstore.module.book.repository.BookRepository;
 import com.bookStore.bookstore.module.book.validator.BookValidator;
+import com.bookStore.bookstore.module.order.model.StatusOrder;
+import com.bookStore.bookstore.module.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,6 +28,7 @@ import java.util.UUID;
 public class BookService {
 
     private final BookRepository repository;
+    private final OrderRepository orderRepository;
     private final BookValidator validator;
     private final BookMapper mapper;
     private final AuthorService authorService;
@@ -40,8 +44,15 @@ public class BookService {
         return repository.save(book);
     }
 
-    public Optional<Book> getById(UUID id){
-        return repository.findById(id);
+    public Book getById(UUID id) {
+        return repository.findById(id)
+                .map((Book book) -> {
+                    if (book.getStatus().equals(StatusBook.DELETED_AT)) {
+                        throw new BookUnavailableException("This book is deleted in the system");
+                    }
+                    return book;
+                })
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     public Page<Book> searchBooksByQuery(String title,
