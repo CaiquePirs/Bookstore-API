@@ -28,28 +28,36 @@ public class AuthorService {
         return repository.findById(id);
     }
 
-    public List<Author> filterSearch(String name, String nationality){
-        var author = new Author();
-        author.setName(name);
-        author.setNationality(nationality);
+    public Page<Author> filterSearch(String name,
+                                     String nationality,
+                                     String biography,
+                                     StatusAuthor status,
+                                     Integer page,
+                                     Integer sizePage){
 
-        ExampleMatcher matcher = ExampleMatcher
-                .matching()
-                .withIgnorePaths("id", "biography", "dateBirth")
-                .withIgnoreNullValues()
-                .withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Specification<Author> specs = (root, query, cb) -> cb.conjunction();
 
-        Example<Author> authorExample = Example.of(author, matcher);
-        return repository.findAll(authorExample);
+        if (name != null && !name.isBlank()) {
+            specs = specs.and(AuthorSpecs.nameEqual(name));
+        }
+
+        if(nationality != null && !nationality.isBlank()){
+            specs = specs.and(AuthorSpecs.nationalityEqual(nationality));
+        }
+
+        if(biography != null && !biography.isBlank()){
+            specs = specs.and(AuthorSpecs.biographyEqual(biography));
+        }
+
+        if (status != null) {
+            specs = specs.and((root, query, cb) -> cb.equal(root.get("status"), status));
+        } else {
+            specs = specs.and((root, query, cb) -> cb.notEqual(root.get("status"), StatusBook.DELETED_AT));
+        }
+
+        Pageable pageRequest = PageRequest.of(page, sizePage);
+        return repository.findAll(specs, pageRequest);
     }
-
-
-    public void delete(Author author){
-        repository.delete(author);
-    }
-
-    public void update(Author author){
 
     public Author update(UUID id, AuthorDTO dto){
         var author = searchById(id);
