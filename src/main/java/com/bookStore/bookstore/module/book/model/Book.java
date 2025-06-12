@@ -48,7 +48,7 @@ public class Book {
     private LocalDateTime creationDate;
 
     @UpdateTimestamp
-    private LocalDateTime updateDate;
+    private LocalDateTime UpdateTimestamp;
 
     @OneToMany(mappedBy = "book")
     private List<Order> orders = new ArrayList<>();
