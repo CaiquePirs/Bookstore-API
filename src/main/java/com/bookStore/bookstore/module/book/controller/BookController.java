@@ -61,24 +61,9 @@ public class BookController implements GenericController {
 
     @PutMapping("{id}")
     public ResponseEntity<ResponseBookDTO> update(@PathVariable UUID id, @RequestBody BookDTO dto){
-        return service.getById(id).map(book -> {
-            service.searchISBN(book);
-
-            var author = authorService.searchById(dto.authorId())
-                    .orElseThrow(() -> new AuthorNotFoundException(dto.authorId()));
-
-            book.setIsbn(dto.isbn());
-            book.setTitle(dto.title());
-            book.setPublisher(dto.publisher());
-            book.setPublicationDate(dto.publicationDate());
-            book.setAuthor(author);
-
-            var updatedBook = service.update(book);
-            return ResponseEntity.ok(mapper.toDTO(updatedBook));
-
-        }).orElseThrow(() -> new BookNotFoundException(id));
-
-
+        var book = service.update(id, dto);
+        var uri = generateHeaderLocation(id);
+        return ResponseEntity.created(uri).body(mapper.toDTO(book));
     }
 
 }

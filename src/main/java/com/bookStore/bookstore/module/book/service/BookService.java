@@ -103,11 +103,29 @@ public class BookService {
         repository.save(existBook);
     }
 
-    public void searchISBN(Book book){
-        validator.validateIsbn(book.getIsbn(), book.getId());
+    public void searchISBN(String isbn, UUID bookId){
+        validator.validateIsbn(isbn, bookId);
     }
 
-    public Book update(Book book){
+    public Book update(UUID id, BookDTO dto){
+        searchISBN(dto.isbn(), id);
+
+        var book = repository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
+
+        if(book.getStatus().equals(StatusBook.DELETED_AT)){
+            throw new BookUnavailableException("This book has already been deleted");
+        }
+
+        var author = authorService.searchById(dto.authorId())
+                .orElseThrow(() -> new AuthorNotFoundException(dto.authorId()));
+
+        book.setIsbn(dto.isbn());
+        book.setTitle(dto.title());
+        book.setPublisher(dto.publisher());
+        book.setPublicationDate(dto.publicationDate());
+        book.setAuthor(author);
+
         return repository.save(book);
     }
 
