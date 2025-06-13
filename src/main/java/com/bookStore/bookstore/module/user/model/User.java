@@ -34,6 +34,8 @@ public class User {
     @Column(nullable = false)
     private LocalDate dateBirth;
 
+    private StatusUser status;
+
     @CreationTimestamp
     private LocalDateTime CreationTimestamp;
 
