@@ -2,11 +2,10 @@ package com.bookStore.bookstore.module.user.controller;
 
 import com.bookStore.bookstore.module.user.DTO.UserDTO;
 import com.bookStore.bookstore.module.user.DTO.UserResponseDTO;
-import com.bookStore.bookstore.module.user.exception.UserNotFoundException;
 import com.bookStore.bookstore.module.user.mappers.UserMapper;
+import com.bookStore.bookstore.module.user.model.StatusUser;
 import com.bookStore.bookstore.module.user.model.User;
 import com.bookStore.bookstore.module.user.service.UserService;
-import com.bookStore.bookstore.module.user.validator.UserValidator;
 import com.bookStore.bookstore.module.util.GenericController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,11 +49,9 @@ public class UserController implements GenericController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id){
-       return service.searchById(id).map(user -> {
-           service.delete(id);
-           return ResponseEntity.ok("User deleted successfully");
-       }).orElseThrow(() -> new UserNotFoundException(id));
+    public ResponseEntity<Void> delete(@PathVariable UUID id){
+       service.softDelete(id);
+       return ResponseEntity.noContent().build();
     }
 
 

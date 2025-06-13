@@ -42,8 +42,10 @@ public class UserService {
         }).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public void delete(UUID id){
-        repository.deleteById(id);
+    public void softDelete(UUID id){
+        var user = searchById(id);
+        user.setStatus(StatusUser.DELETED_AT);
+        repository.save(user);
     }
 
     public Page<User> searchUserByQuery(String username, StatusUser status, Integer page, Integer sizePage){
