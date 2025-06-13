@@ -1,6 +1,7 @@
 package com.bookStore.bookstore.module.user.service;
 
 import com.bookStore.bookstore.module.user.mappers.UserMapper;
+import com.bookStore.bookstore.module.user.model.StatusUser;
 import com.bookStore.bookstore.module.user.model.User;
 import com.bookStore.bookstore.module.user.repository.UserRepository;
 import com.bookStore.bookstore.module.user.repository.UserSpecs;
@@ -25,6 +26,7 @@ public class UserService {
 
     public User create(User user){
         validator.validateUser(user);
+        user.setStatus(StatusUser.ACTIVE);
         return repository.save(user);
     }
 

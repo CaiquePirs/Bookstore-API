@@ -23,7 +23,6 @@ public class UserController implements GenericController {
 
     private final UserService service;
     private final UserMapper mapper;
-    private final UserValidator validator;
 
     @PostMapping
     public ResponseEntity<UserResponseDTO> create(@RequestBody @Valid UserDTO dto){
