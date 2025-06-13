@@ -60,14 +60,12 @@ public class OrderService {
         }
 
         if (dto.userId() != null) {
-            var user = userService.searchById(dto.userId())
-                    .orElseThrow(() -> new UserNotFoundException(dto.userId()));
+            var user = userService.searchById(dto.userId());
             existingOrder.setUser(user);
         }
 
         if (dto.bookId() != null) {
-            var book = bookService.getById(dto.bookId())
-                    .orElseThrow(() -> new BookNotFoundException(dto.bookId()));
+            var book = bookService.getById(dto.bookId());
             existingOrder.setBook(book);
         }
 
