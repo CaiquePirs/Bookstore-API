@@ -1,6 +1,8 @@
 package com.bookStore.bookstore.module.user.validator;
 
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
+import com.bookStore.bookstore.module.user.exception.UserDeletedException;
+import com.bookStore.bookstore.module.user.model.StatusUser;
 import com.bookStore.bookstore.module.user.model.User;
 import com.bookStore.bookstore.module.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -20,10 +22,16 @@ public class UserValidator {
 
         if(userFound.isPresent()){
             var u = userFound.get();
+
+            if(StatusUser.DELETED_AT.equals(u.getStatus())){
+                throw new UserDeletedException("This user is already deleted");
+            }
+
             if(u.getEmail().equals(user.getEmail())){
                 throw new DuplicateRecordException("This email has already been registered");
+            }
 
-            } else if(u.getUsername().equals(user.getUsername())){
+            if(u.getUsername().equals(user.getUsername())){
                 throw new DuplicateRecordException("This username has already been registered");
             }
         }
