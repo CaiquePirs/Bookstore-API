@@ -46,11 +46,17 @@ public class UserService {
         repository.deleteById(id);
     }
 
-    public Page<User> searchUserByQuery(String username, Integer page, Integer sizePage){
-        Specification<User> specs = (root, query, cb) -> cb.conjunction(); // true
+    public Page<User> searchUserByQuery(String username, StatusUser status, Integer page, Integer sizePage){
+        Specification<User> specs = (root, query, cb) -> cb.conjunction();
 
         if (username != null && !username.isBlank()) {
             specs = specs.and(UserSpecs.usernameEqual(username));
+        }
+
+        if (status != null) {
+            specs = specs.and((root, query, cb) -> cb.equal(root.get("status"), status));
+        } else {
+            specs = specs.and((root, query, cb) -> cb.notEqual(root.get("status"), StatusUser.DELETED_AT));
         }
 
         Pageable pageRequest = PageRequest.of(page, sizePage);

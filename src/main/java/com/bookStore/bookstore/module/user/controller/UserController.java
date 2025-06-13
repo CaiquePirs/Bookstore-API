@@ -40,10 +40,11 @@ public class UserController implements GenericController {
     @GetMapping
     public ResponseEntity<Page<UserResponseDTO>> listUser(
             @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "status", required = false) StatusUser status,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size-page", defaultValue = "10") Integer sizePage) {
 
-        Page<User> pageResult = service.searchUserByQuery(username, page, sizePage);
+        Page<User> pageResult = service.searchUserByQuery(username, status, page, sizePage);
         Page<UserResponseDTO> result = pageResult.map(mapper::toDTO);
         return ResponseEntity.ok(result);
     }
