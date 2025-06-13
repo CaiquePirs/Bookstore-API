@@ -1,5 +1,6 @@
 package com.bookStore.bookstore.module.author.validator;
 
+import com.bookStore.bookstore.module.author.model.StatusAuthor;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.author.repository.AuthorRepository;
@@ -21,7 +22,7 @@ public class AuthorValidator {
     }
 
     private boolean existsDuplicateAuthor(Author author) {
-        Optional<Author> authorFound = repository.findAuthorByName(author.getName());
+        Optional<Author> authorFound = repository.findByNameAndStatus(author.getName(), StatusAuthor.ACTIVE);
         return authorFound.isPresent() &&
                 !authorFound.get().getId().equals(author.getId());
     }
