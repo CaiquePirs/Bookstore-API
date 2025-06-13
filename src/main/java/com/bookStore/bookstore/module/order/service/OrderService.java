@@ -1,6 +1,5 @@
 package com.bookStore.bookstore.module.order.service;
 
-import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
 import com.bookStore.bookstore.module.book.model.StatusBook;
 import com.bookStore.bookstore.module.book.service.BookService;
 import com.bookStore.bookstore.module.order.DTO.OrderDTO;
@@ -8,13 +7,17 @@ import com.bookStore.bookstore.module.order.DTO.OrderResponseDTO;
 import com.bookStore.bookstore.module.order.exception.OrderLoanedException;
 import com.bookStore.bookstore.module.order.exception.OrderNotFoundException;
 import com.bookStore.bookstore.module.order.exception.OrderReturnedException;
+import com.bookStore.bookstore.module.order.model.Order;
 import com.bookStore.bookstore.module.order.model.StatusOrder;
 import com.bookStore.bookstore.module.order.repository.OrderRepository;
 import com.bookStore.bookstore.module.order.util.GenerateOrderResponse;
 import com.bookStore.bookstore.module.order.validator.OrderValidator;
-import com.bookStore.bookstore.module.user.exception.UserNotFoundException;
 import com.bookStore.bookstore.module.user.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -39,6 +42,17 @@ public class OrderService {
         var order = repository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id));
         return generate.createOrderResponseDTO(order);
+    }
+
+    public Page<Order> searchFilter(StatusOrder status, Integer page, Integer sizePage) {
+        Specification<Order> specs = (root, query, cb) -> cb.conjunction();
+
+        if (status != null) {
+            specs = specs.and((root, query, cb) -> cb.equal(root.get("status"), status));
+        }
+
+        Pageable pageRequest = PageRequest.of(page, sizePage);
+        return repository.findAll(specs, pageRequest);
     }
 
     public void delete(UUID id){
