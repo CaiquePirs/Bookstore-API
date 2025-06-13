@@ -51,7 +51,7 @@ public class BookService {
                     }
                     return book;
                 })
-                .orElseThrow(() -> new BookNotFoundException(id));
+                .orElseThrow(() -> new BookNotFoundException("Book ID not found"));
     }
 
     public Page<Book> searchBooksByQuery(String title,
@@ -93,7 +93,7 @@ public class BookService {
 
     public void deleteById(UUID id){
         var existBook = repository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+                .orElseThrow(() -> new BookNotFoundException("Book ID not found"));
 
         var existOrderActive = orderRepository.existsByBookAndStatusNot(existBook, StatusOrder.RETURNED);
 
@@ -117,7 +117,7 @@ public class BookService {
         searchISBN(dto.isbn(), id);
 
         var book = repository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+                .orElseThrow(() -> new BookNotFoundException("Book ID not found"));
 
         if(book.getStatus().equals(StatusBook.DELETED_AT)){
             throw new BookUnavailableException("This book has already been deleted");

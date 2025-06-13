@@ -40,7 +40,7 @@ public class OrderService {
 
     public OrderResponseDTO searchById(UUID id){
         var order = repository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException(id));
+                .orElseThrow(() -> new OrderNotFoundException("Order ID not found"));
         return generate.createOrderResponseDTO(order);
     }
 
@@ -57,20 +57,20 @@ public class OrderService {
 
     public void delete(UUID id){
       var order = repository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException(id));
+                .orElseThrow(() -> new OrderNotFoundException("Order ID not found"));
 
         if(order.getStatus().equals(StatusOrder.LOANED)){
-            throw new OrderLoanedException();
+            throw new OrderLoanedException("Error deleting: This order is active");
         }
         repository.deleteById(id);
     }
 
     public OrderResponseDTO update(UUID id, OrderDTO dto){
         var existingOrder = repository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException(id));
+                .orElseThrow(() -> new OrderNotFoundException("Order ID not found"));
 
         if(existingOrder.getStatus() == StatusOrder.RETURNED){
-            throw new OrderReturnedException();
+            throw new OrderReturnedException("This order has already been returned");
         }
 
         if (dto.userId() != null) {
@@ -97,10 +97,10 @@ public class OrderService {
 
     public void returnedOrder(UUID id){
         var order = repository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException(id));
+                .orElseThrow(() -> new OrderNotFoundException("Order ID not found"));
 
         if(order.getStatus().equals(StatusOrder.RETURNED)){
-            throw new OrderReturnedException();
+            throw new OrderReturnedException("This order has already been returned");
         }
 
         order.getBook().setStatus(StatusBook.AVAILABLE);

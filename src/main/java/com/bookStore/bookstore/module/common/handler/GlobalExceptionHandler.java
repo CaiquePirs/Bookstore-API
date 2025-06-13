@@ -1,10 +1,11 @@
 package com.bookStore.bookstore.module.common.handler;
 
+import com.bookStore.bookstore.module.author.exception.AuthorDeletedException;
+import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
 import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
 import com.bookStore.bookstore.module.book.exception.BookUnavailableException;
 import com.bookStore.bookstore.module.common.error.ErrorField;
 import com.bookStore.bookstore.module.common.error.ErrorResponse;
-import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.order.exception.OrderLoanedException;
 import com.bookStore.bookstore.module.order.exception.OrderNotFoundException;
@@ -13,11 +14,9 @@ import com.bookStore.bookstore.module.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -39,42 +38,129 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-
-        List<ErrorField> listErrors = fieldErrors
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        List<ErrorField> listErrors = e.getBindingResult()
+                .getFieldErrors()
                 .stream()
                 .map(fe -> new ErrorField(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
-        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Validation error", listErrors);
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "Validation error",
+                listErrors
+        );
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }
 
     @ExceptionHandler(DateTimeParseException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorResponse handleDateTimeParseException(DateTimeParseException e) {
+    public ResponseEntity<ErrorResponse> handleDateTimeParseException(DateTimeParseException e) {
         ErrorField errorField = new ErrorField("date", "Invalid date format. Use default: yyyy-MM-dd.");
-        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Error converting date", List.of(errorField));
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "Error converting date",
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }
 
-    @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleBookNotFound(BookNotFoundException e) {
-        return buildNotFoundResponse("Id", "Book not found");
+    @ExceptionHandler(AuthorDeletedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorDeleted(AuthorDeletedException e) {
+        ErrorField errorField = new ErrorField("Author", e.getMessage());
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(AuthorNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleAuthorNotFound(AuthorNotFoundException e) {
-        return buildNotFoundResponse("Id", "Author not found");
+        ErrorField errorField = new ErrorField("Author", e.getMessage());
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBookNotFound(BookNotFoundException e){
+        ErrorField errorField = new ErrorField("Book", e.getMessage());
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
-        return buildNotFoundResponse("Id", "User not found");
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e){
+        ErrorField errorField = new ErrorField("User", e.getMessage());
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlerOrderNotFound(OrderNotFoundException e){
-        return buildNotFoundResponse("Id", "Order not found");
+    public ResponseEntity<ErrorResponse> handleOrderNotFound(OrderNotFoundException e){
+        ErrorField errorField = new ErrorField("Order", e.getMessage());
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(BookUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleBookUnavailable(BookUnavailableException e) {
+        ErrorField errorField = new ErrorField("Book", e.getMessage());
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(OrderLoanedException.class)
+    public ResponseEntity<ErrorResponse> handleOrderLoaned(OrderLoanedException e){
+        ErrorField errorField = new ErrorField("Order", e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(OrderReturnedException.class)
+    public ResponseEntity<ErrorResponse> handleOrderReturned(OrderReturnedException e){
+        ErrorField errorField = new ErrorField("Order", e.getMessage());
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(DuplicateRecordException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateRecordException(DuplicateRecordException e){
+        ErrorField errorField = new ErrorField("Duplicate", e.getMessage());
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
@@ -82,51 +168,36 @@ public class GlobalExceptionHandler {
         return buildNotFoundResponse("Url", "Url not found");
     }
 
-    @ExceptionHandler(BookUnavailableException.class)
-    public ResponseEntity<ErrorResponse> handlerBookUnavaiable(BookUnavailableException e){
-        return buildNotFoundResponse("Book", "This book is already loaned");
-    }
-
-    @ExceptionHandler(OrderLoanedException.class)
-    public ResponseEntity<ErrorResponse> handlerOrderLoaned(OrderLoanedException e){
-        return buildNotFoundResponse("Error", "Error deleting: This order is active");
-    }
-
-    @ExceptionHandler(OrderReturnedException.class)
-    public ResponseEntity<ErrorResponse> handlerOrderLoaned(OrderReturnedException e){
-        return buildNotFoundResponse("Error", "This order has already been returned");
-    }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handlerMethodNotSupported(HttpRequestMethodNotSupportedException e){
-
+    public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException e) {
         ErrorField errorField = new ErrorField("URL", "Method Not Allowed");
-        ErrorResponse error = new ErrorResponse(HttpStatus.METHOD_NOT_ALLOWED.value(), "Method not allowed for this endpoint.", List.of(errorField));
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.METHOD_NOT_ALLOWED.value(),
+                "Method not allowed for this endpoint.",
+                List.of(errorField)
+        );
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(error);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handlerMessageNotReadableException(HttpMessageNotReadableException e){
-      ErrorField errorField = new ErrorField("Error", "Invalid data type");
-      ErrorResponse error = ErrorResponse.standardResponse("Error Invalid data type ");
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-
-    }
-
-    @ExceptionHandler(DuplicateRecordException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handlerDuplicateRecordException(DuplicateRecordException e){
-        return ErrorResponse.conflict(e.getMessage());
+    public ResponseEntity<ErrorResponse> handleMessageNotReadableException(HttpMessageNotReadableException e) {
+        ErrorField errorField = new ErrorField("Error", "Invalid data type");
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Error: Invalid data type",
+                List.of(errorField)
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handlerInternalError(RuntimeException e){
-        return new ErrorResponse(
+    public ResponseEntity<ErrorResponse> handleInternalError(RuntimeException e) {
+        ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "An unexpected error occurred",
-                List.of()
+                List.of(new ErrorField("Exception", e.getClass().getSimpleName()))
         );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }

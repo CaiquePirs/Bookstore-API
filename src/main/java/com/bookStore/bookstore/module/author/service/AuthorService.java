@@ -37,7 +37,7 @@ public class AuthorService {
                 throw new AuthorDeletedException("This author has been deleted from the system");
             }
             return author;
-        }).orElseThrow(() -> new AuthorNotFoundException(id));
+        }).orElseThrow(() -> new AuthorNotFoundException("Author ID not found"));
     }
 
     public Page<Author> filterSearch(String name,

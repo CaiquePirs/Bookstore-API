@@ -54,7 +54,7 @@ public class UserService {
                 throw new UserDeletedException("This user is already deleted");
             }
             return user;
-        }).orElseThrow(() -> new UserNotFoundException(id));
+        }).orElseThrow(() -> new UserNotFoundException("User ID not found"));
     }
 
     public void softDelete(UUID id){
@@ -96,7 +96,7 @@ public class UserService {
         }
 
         if (dto.password() != null) {
-            user.setPassword(dto.password()); // need to add encryption
+            user.setPassword(dto.password());
         }
 
         if (dto.dateBirth() != null) {
