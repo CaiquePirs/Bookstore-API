@@ -56,7 +56,7 @@ public class UserController implements GenericController {
 
 
     @PutMapping("{id}")
-    public ResponseEntity<UserResponseDTO> update(@PathVariable UUID id, @RequestBody UserDTO dto){
+    public ResponseEntity<UserResponseDTO> update(@PathVariable UUID id, @Valid @RequestBody UserDTO dto){
        var user = service.update(id, dto);
        var uri = generateHeaderLocation(id);
        return ResponseEntity.created(uri).body(mapper.toDTO(user));

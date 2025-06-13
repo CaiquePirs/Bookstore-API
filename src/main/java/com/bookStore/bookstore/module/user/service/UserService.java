@@ -1,5 +1,6 @@
 package com.bookStore.bookstore.module.user.service;
 
+import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.user.DTO.UserDTO;
 import com.bookStore.bookstore.module.user.exception.UserDeletedException;
 import com.bookStore.bookstore.module.user.exception.UserNotFoundException;
@@ -10,6 +11,7 @@ import com.bookStore.bookstore.module.user.repository.UserRepository;
 import com.bookStore.bookstore.module.user.repository.UserSpecs;
 import com.bookStore.bookstore.module.user.validator.UserValidator;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +30,22 @@ public class UserService {
 
     public User create(User user){
         validator.validateUser(user);
-        user.setStatus(StatusUser.ACTIVE);
-        return repository.save(user);
+
+        try {
+            user.setStatus(StatusUser.ACTIVE);
+            return repository.save(user);
+
+        } catch (DataIntegrityViolationException e) {
+            String message = e.getMostSpecificCause().getMessage();
+
+            if (message != null && message.contains("email")) {
+                throw new DuplicateRecordException("This email has already been registered");
+            }
+            if (message != null && message.contains("username")) {
+                throw new DuplicateRecordException("This username has already been registered");
+            }
+            throw e;
+        }
     }
 
     public User searchById(UUID id){
@@ -64,27 +80,45 @@ public class UserService {
         return repository.findAll(specs, pageRequest);
     }
 
-    public User update(UUID id, UserDTO dto){
-       var user = searchById(id);
+    public User update(UUID id, UserDTO dto) {
+        var user = searchById(id);
 
-        if (dto.username() != null) {
+        if (user.getStatus() == StatusUser.DELETED_AT) {
+            throw new UserDeletedException("This user is already deleted");
+        }
+
+        if (dto.username() != null && !dto.username().equals(user.getUsername())) {
             user.setUsername(dto.username());
         }
 
-        if(dto.email() != null){
+        if (dto.email() != null && !dto.email().equals(user.getEmail())) {
             user.setEmail(dto.email());
         }
 
-        if(dto.password() != null){
-            user.setPassword(dto.password());
+        if (dto.password() != null) {
+            user.setPassword(dto.password()); // criptografe aqui se necessário
         }
 
-        if(dto.dateBirth() != null){
+        if (dto.dateBirth() != null) {
             user.setDateBirth(dto.dateBirth());
         }
 
         validator.validateUser(user);
-        return repository.save(user);
+
+        try {
+            return repository.save(user);
+
+        } catch (DataIntegrityViolationException e) {
+            String message = e.getMostSpecificCause().getMessage();
+
+            if (message != null && message.contains("email")) {
+                throw new DuplicateRecordException("This email has already been registered");
+            }
+            if (message != null && message.contains("username")) {
+                throw new DuplicateRecordException("This username has already been registered");
+            }
+            throw e;
+        }
     }
 
 }
