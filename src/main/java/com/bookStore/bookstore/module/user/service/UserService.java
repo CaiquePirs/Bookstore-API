@@ -1,5 +1,8 @@
 package com.bookStore.bookstore.module.user.service;
 
+import com.bookStore.bookstore.module.user.DTO.UserDTO;
+import com.bookStore.bookstore.module.user.exception.UserDeletedException;
+import com.bookStore.bookstore.module.user.exception.UserNotFoundException;
 import com.bookStore.bookstore.module.user.mappers.UserMapper;
 import com.bookStore.bookstore.module.user.model.StatusUser;
 import com.bookStore.bookstore.module.user.model.User;
@@ -30,8 +33,13 @@ public class UserService {
         return repository.save(user);
     }
 
-    public Optional<User> searchById(UUID id){
-        return repository.findById(id);
+    public User searchById(UUID id){
+        return repository.findById(id).map(user -> {
+            if(user.getStatus().equals(StatusUser.DELETED_AT)){
+                throw new UserDeletedException("This user is already deleted");
+            }
+            return user;
+        }).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public void delete(UUID id){

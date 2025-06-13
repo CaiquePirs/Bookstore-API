@@ -33,10 +33,8 @@ public class UserController implements GenericController {
 
     @GetMapping("{id}")
     public ResponseEntity<UserResponseDTO> searchById(@PathVariable UUID id){
-       return service.searchById(id).map(user -> {
-           UserResponseDTO dto = mapper.toDTO(user);
-           return ResponseEntity.ok(dto);
-       }).orElseThrow(() -> new UserNotFoundException(id));
+      var user = service.searchById(id);
+      return ResponseEntity.ok(mapper.toDTO(user));
     }
 
     @GetMapping
