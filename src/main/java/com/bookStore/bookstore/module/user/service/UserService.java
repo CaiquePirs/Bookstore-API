@@ -96,7 +96,7 @@ public class UserService {
         }
 
         if (dto.password() != null) {
-            user.setPassword(dto.password()); // criptografe aqui se necessário
+            user.setPassword(dto.password()); // need to add encryption
         }
 
         if (dto.dateBirth() != null) {
