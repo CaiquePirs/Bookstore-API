@@ -44,8 +44,8 @@ public class AuthorController implements GenericController {
             @RequestParam(value = "nationality", required = false) String nationality,
             @RequestParam(value = "biography", required = false) String biography,
             @RequestParam(value = "status", required = false) StatusAuthor status,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "sizePage", required = false) Integer sizePage){
+            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(value = "sizePage", required = false, defaultValue = "10") Integer sizePage){
 
         Page<Author> pageResult = service.filterSearch(name, nationality, biography, status, page, sizePage);
         Page<AuthorResponseDTO> result = pageResult.map(mapper::toDTO);

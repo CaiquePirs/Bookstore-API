@@ -9,7 +9,6 @@ import com.bookStore.bookstore.module.author.model.StatusAuthor;
 import com.bookStore.bookstore.module.author.repository.AuthorRepository;
 import com.bookStore.bookstore.module.author.repository.AuthorSpecs;
 import com.bookStore.bookstore.module.author.validator.AuthorValidator;
-import com.bookStore.bookstore.module.book.model.StatusBook;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -65,7 +64,7 @@ public class AuthorService {
         if (status != null) {
             specs = specs.and((root, query, cb) -> cb.equal(root.get("status"), status));
         } else {
-            specs = specs.and((root, query, cb) -> cb.notEqual(root.get("status"), StatusBook.DELETED_AT));
+            specs = specs.and((root, query, cb) -> cb.notEqual(root.get("status"), StatusAuthor.DELETED_AT));
         }
 
         Pageable pageRequest = PageRequest.of(page, sizePage);
