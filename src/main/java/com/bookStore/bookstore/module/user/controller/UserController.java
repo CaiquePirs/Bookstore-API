@@ -57,19 +57,9 @@ public class UserController implements GenericController {
 
     @PutMapping("{id}")
     public ResponseEntity<UserResponseDTO> update(@PathVariable UUID id, @RequestBody UserDTO dto){
-        return service.searchById(id).map(user -> {
-            user.setUsername(dto.username());
-            user.setEmail(dto.email());
-            user.setPassword(dto.password());
-
-            validator.validateUser(user);
-            service.update(user);
-
-            var uri = generateHeaderLocation(id);
-            return  ResponseEntity.created(uri).body(mapper.toDTO(user));
-        }).orElseThrow(() -> new UserNotFoundException(id));
-
-
+       var user = service.update(id, dto);
+       var uri = generateHeaderLocation(id);
+       return ResponseEntity.created(uri).body(mapper.toDTO(user));
     }
 
 }

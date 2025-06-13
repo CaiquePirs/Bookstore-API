@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -65,7 +64,26 @@ public class UserService {
         return repository.findAll(specs, pageRequest);
     }
 
-    public User update(User user){
+    public User update(UUID id, UserDTO dto){
+       var user = searchById(id);
+
+        if (dto.username() != null) {
+            user.setUsername(dto.username());
+        }
+
+        if(dto.email() != null){
+            user.setEmail(dto.email());
+        }
+
+        if(dto.password() != null){
+            user.setPassword(dto.password());
+        }
+
+        if(dto.dateBirth() != null){
+            user.setDateBirth(dto.dateBirth());
+        }
+
+        validator.validateUser(user);
         return repository.save(user);
     }
 
