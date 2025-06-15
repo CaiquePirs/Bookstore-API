@@ -11,8 +11,8 @@ public class GenerateOrderResponse {
         OrderResponseDTO dto = new OrderResponseDTO(
                 order.getId(),
                 order.getBook().getTitle(),
-                order.getUser().getUsername(),
-                order.getUser().getEmail(),
+                order.getClient().getUsername(),
+                order.getClient().getEmail(),
                 order.getCreationTimestamp(),
                 order.getStatus());
         return dto;

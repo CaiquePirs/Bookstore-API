@@ -7,7 +7,7 @@ import com.bookStore.bookstore.module.order.DTO.OrderDTO;
 import com.bookStore.bookstore.module.order.mapper.OrderMapper;
 import com.bookStore.bookstore.module.order.model.Order;
 import com.bookStore.bookstore.module.order.model.StatusOrder;
-import com.bookStore.bookstore.module.user.service.UserService;
+import com.bookStore.bookstore.module.client.service.ClientService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,12 +16,12 @@ import org.springframework.stereotype.Component;
 public class OrderValidator {
 
     private final BookService bookService;
-    private final UserService userService;
+    private final ClientService clientService;
     private final OrderMapper mapper;
 
     public Order validateOrder(OrderDTO dto){
         var book = bookService.getById(dto.bookId());
-        var user = userService.searchById(dto.userId());
+        var client = clientService.searchById(dto.clientId());
 
         if (book.getStatus() == StatusBook.UNAVAILABLE) {
             throw new BookUnavailableException("this book is already loaned");
@@ -29,7 +29,7 @@ public class OrderValidator {
 
         var order = mapper.toEntity(dto);
         order.setBook(book);
-        order.setUser(user);
+        order.setClient(client);
         order.setStatus(StatusOrder.LOANED);
         book.setStatus(StatusBook.UNAVAILABLE);
         return order;

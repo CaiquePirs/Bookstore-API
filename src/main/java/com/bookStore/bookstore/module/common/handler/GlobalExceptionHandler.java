@@ -10,7 +10,7 @@ import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.order.exception.OrderLoanedException;
 import com.bookStore.bookstore.module.order.exception.OrderNotFoundException;
 import com.bookStore.bookstore.module.order.exception.OrderReturnedException;
-import com.bookStore.bookstore.module.user.exception.UserNotFoundException;
+import com.bookStore.bookstore.module.client.exception.ClientNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -97,9 +97,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e){
-        ErrorField errorField = new ErrorField("User", e.getMessage());
+    @ExceptionHandler(ClientNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleClientNotFound(ClientNotFoundException e){
+        ErrorField errorField = new ErrorField("Client", e.getMessage());
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 e.getMessage(),

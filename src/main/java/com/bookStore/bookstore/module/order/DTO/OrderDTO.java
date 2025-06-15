@@ -9,8 +9,8 @@ import java.util.UUID;
 public record OrderDTO(UUID id,
                        @NotNull(message = "Book ID is required")
                        UUID bookId,
-                       @NotNull(message = "User ID is required")
-                       UUID userId,
+                       @NotNull(message = "Client ID is required")
+                       UUID clientId,
                        StatusOrder statusOrder,
                        StatusBook statusBook){
 }

@@ -8,7 +8,7 @@ import java.util.UUID;
 public record OrderResponseDTO(UUID id,
                                String bookTitle,
                                String userName,
-                               String userEmail,
+                               String clientEmail,
                                LocalDateTime dateOrder,
                                StatusOrder statusOrder) {
 }

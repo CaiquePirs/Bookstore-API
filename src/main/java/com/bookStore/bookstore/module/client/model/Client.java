@@ -1,4 +1,4 @@
-package com.bookStore.bookstore.module.user.model;
+package com.bookStore.bookstore.module.client.model;
 
 import com.bookStore.bookstore.module.order.model.Order;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -15,8 +15,8 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "users")
-public class User {
+@Table(name = "clients")
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,7 +34,7 @@ public class User {
     @Column(nullable = false)
     private LocalDate dateBirth;
 
-    private StatusUser status;
+    private StatusClient status;
 
     @CreationTimestamp
     private LocalDateTime CreationTimestamp;
@@ -46,5 +46,5 @@ public class User {
     @JsonManagedReference
     private List<Order> orders = new ArrayList<>();
 
-    public User(){}
+    public Client(){}
 }

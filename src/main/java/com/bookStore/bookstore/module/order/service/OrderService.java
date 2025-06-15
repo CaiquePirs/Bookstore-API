@@ -12,7 +12,7 @@ import com.bookStore.bookstore.module.order.model.StatusOrder;
 import com.bookStore.bookstore.module.order.repository.OrderRepository;
 import com.bookStore.bookstore.module.order.util.GenerateOrderResponse;
 import com.bookStore.bookstore.module.order.validator.OrderValidator;
-import com.bookStore.bookstore.module.user.service.UserService;
+import com.bookStore.bookstore.module.client.service.ClientService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +29,7 @@ public class OrderService {
     private final OrderRepository repository;
     private final OrderValidator validate;
     private final BookService bookService;
-    private final UserService userService;
+    private final ClientService clientService;
     private final GenerateOrderResponse generate;
 
     public OrderResponseDTO create(OrderDTO dto){
@@ -73,9 +73,9 @@ public class OrderService {
             throw new OrderReturnedException("This order has already been returned");
         }
 
-        if (dto.userId() != null) {
-            var user = userService.searchById(dto.userId());
-            existingOrder.setUser(user);
+        if (dto.clientId() != null) {
+            var client = clientService.searchById(dto.clientId());
+            existingOrder.setClient(client);
         }
 
         if (dto.bookId() != null) {

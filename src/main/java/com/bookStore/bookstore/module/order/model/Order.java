@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.module.order.model;
 
-import com.bookStore.bookstore.module.user.model.User;
+import com.bookStore.bookstore.module.client.model.Client;
 import com.bookStore.bookstore.module.book.model.Book;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -29,9 +29,9 @@ public class Order {
     private Book book;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "client_id")
     @JsonBackReference
-    private User user;
+    private Client client;
 
     @CreationTimestamp
     private LocalDateTime creationTimestamp;
