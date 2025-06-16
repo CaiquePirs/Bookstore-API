@@ -1,19 +1,19 @@
 package com.bookStore.bookstore.module.book.service;
 
-import com.bookStore.bookstore.module.author.exception.AuthorNotFoundException;
 import com.bookStore.bookstore.module.book.exception.BookNotFoundException;
 import com.bookStore.bookstore.module.book.exception.BookUnavailableException;
 import com.bookStore.bookstore.module.book.model.StatusBook;
 import com.bookStore.bookstore.module.book.repository.BookSpecs;
 import com.bookStore.bookstore.module.author.service.AuthorService;
 import com.bookStore.bookstore.module.book.DTO.BookDTO;
-import com.bookStore.bookstore.module.author.model.Author;
 import com.bookStore.bookstore.module.book.mapper.BookMapper;
 import com.bookStore.bookstore.module.book.model.Book;
 import com.bookStore.bookstore.module.book.repository.BookRepository;
 import com.bookStore.bookstore.module.book.validator.BookValidator;
+import com.bookStore.bookstore.module.client.service.ClientService;
 import com.bookStore.bookstore.module.order.model.StatusOrder;
 import com.bookStore.bookstore.module.order.repository.OrderRepository;
+import com.bookStore.bookstore.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,12 +32,19 @@ public class BookService {
     private final BookValidator validator;
     private final BookMapper mapper;
     private final AuthorService authorService;
+    private final SecurityService securityService;
+    private final ClientService clientService;
 
     public Book create(BookDTO dto){
         var author = authorService.searchById(dto.authorId());
 
         validator.validateIsbn(dto.isbn(), null);
         Book book = mapper.toEntity(dto);
+
+        var userLogged = securityService.getLoggedUsername();
+        var findUserLogged = clientService.getClientByUsername(userLogged);
+        book.setUserLogged(findUserLogged);
+
         book.setAuthor(author);
         book.setStatus(StatusBook.AVAILABLE);
         return repository.save(book);
@@ -106,6 +113,11 @@ public class BookService {
         }
 
         existBook.setStatus(StatusBook.DELETED_AT);
+
+        var userLogged = securityService.getLoggedUsername();
+        var findUserLogged = clientService.getClientByUsername(userLogged);
+        existBook.setUserLogged(findUserLogged);
+
         repository.save(existBook);
     }
 
@@ -124,6 +136,10 @@ public class BookService {
         }
 
         var author = authorService.searchById(dto.authorId());
+
+        var userLogged = securityService.getLoggedUsername();
+        var findUserLogged = clientService.getClientByUsername(userLogged);
+        author.setUserLogged(findUserLogged);
 
         book.setIsbn(dto.isbn());
         book.setTitle(dto.title());

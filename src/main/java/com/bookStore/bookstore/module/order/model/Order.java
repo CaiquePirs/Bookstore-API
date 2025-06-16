@@ -39,6 +39,10 @@ public class Order {
     @UpdateTimestamp
     private LocalDateTime updateTimeStamp;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    Client userLogged;
+
     public Order(){}
 
 }

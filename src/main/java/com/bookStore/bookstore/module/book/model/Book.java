@@ -1,6 +1,7 @@
 package com.bookStore.bookstore.module.book.model;
 
 import com.bookStore.bookstore.module.author.model.Author;
+import com.bookStore.bookstore.module.client.model.Client;
 import com.bookStore.bookstore.module.order.model.Order;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -49,6 +50,10 @@ public class Book {
 
     @UpdateTimestamp
     private LocalDateTime UpdateTimestamp;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    Client userLogged;
 
     @OneToMany(mappedBy = "book")
     private List<Order> orders = new ArrayList<>();

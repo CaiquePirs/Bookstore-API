@@ -45,6 +45,10 @@ public class Client {
     @Enumerated(EnumType.STRING)
     private RoleClient role;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    Client userLogged;
+
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Order> orders = new ArrayList<>();

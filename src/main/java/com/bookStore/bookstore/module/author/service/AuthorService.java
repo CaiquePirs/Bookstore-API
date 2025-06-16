@@ -9,6 +9,8 @@ import com.bookStore.bookstore.module.author.model.StatusAuthor;
 import com.bookStore.bookstore.module.author.repository.AuthorRepository;
 import com.bookStore.bookstore.module.author.repository.AuthorSpecs;
 import com.bookStore.bookstore.module.author.validator.AuthorValidator;
+import com.bookStore.bookstore.module.client.service.ClientService;
+import com.bookStore.bookstore.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,10 +25,18 @@ public class AuthorService {
    private final AuthorRepository repository;
    private final AuthorValidator validator;
    private final AuthorMapper mapper;
+   private final SecurityService securityService;
+   private final ClientService clientService;
+
 
     public Author create(AuthorDTO dto){
         Author author = mapper.toEntity(dto);
         validator.validate(author);
+
+        var userLogged = securityService.getLoggedUsername();
+        var findUserLogged = clientService.getClientByUsername(userLogged);
+        author.setUserLogged(findUserLogged);
+
         author.setStatus(StatusAuthor.ACTIVE);
         return repository.save(author);
     }
@@ -74,6 +84,11 @@ public class AuthorService {
     public void delete(UUID id){
         var author = searchById(id);
         author.setStatus(StatusAuthor.DELETED_AT);
+
+        var userLogged = securityService.getLoggedUsername();
+        var findUserLogged = clientService.getClientByUsername(userLogged);
+        author.setUserLogged(findUserLogged);
+
         repository.save(author);
     }
 
@@ -92,7 +107,13 @@ public class AuthorService {
         if (dto.dateBirth() != null) {
             author.setDateBirth(dto.dateBirth());
         }
+
         validator.validate(author);
+
+        var userLogged = securityService.getLoggedUsername();
+        var findUserLogged = clientService.getClientByUsername(userLogged);
+        author.setUserLogged(findUserLogged);
+
         return repository.save(author);
     }
 

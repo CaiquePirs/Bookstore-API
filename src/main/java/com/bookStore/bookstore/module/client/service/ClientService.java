@@ -10,6 +10,7 @@ import com.bookStore.bookstore.module.client.model.StatusClient;
 import com.bookStore.bookstore.module.client.repository.ClientRepository;
 import com.bookStore.bookstore.module.client.repository.ClientSpecs;
 import com.bookStore.bookstore.module.client.validator.ClientValidator;
+import com.bookStore.bookstore.security.SecurityService;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ public class ClientService {
     private final ClientRepository repository;
     private final ClientValidator validator;
     private final PasswordEncoder encoder;
+    private final SecurityService securityService;
 
     public Client getClientByUsername(String username){
         return repository.findByUsernameAndStatus(username, StatusClient.ACTIVE)
@@ -38,6 +40,10 @@ public class ClientService {
         validator.validateClient(client);
 
         try {
+            var userLogged = securityService.getLoggedUsername();
+            var findUserLogged = getClientByUsername(userLogged);
+            client.setUserLogged(findUserLogged);
+
             client.setPassword(encoder.encode(client.getPassword()));
             client.setStatus(StatusClient.ACTIVE);
             client.setRole(RoleClient.USER);
@@ -68,6 +74,10 @@ public class ClientService {
     public void softDelete(UUID id){
         var client = searchById(id);
         client.setStatus(StatusClient.DELETED_AT);
+
+        var userLogged = securityService.getLoggedUsername();
+        var findUserLogged = getClientByUsername(userLogged);
+        client.setUserLogged(findUserLogged);
         repository.save(client);
     }
 
@@ -114,6 +124,9 @@ public class ClientService {
         validator.validateClient(client);
 
         try {
+            var userLogged = securityService.getLoggedUsername();
+            var findUserLogged = getClientByUsername(userLogged);
+            client.setUserLogged(findUserLogged);
             return repository.save(client);
 
         } catch (DataIntegrityViolationException e) {
