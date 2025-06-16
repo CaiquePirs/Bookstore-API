@@ -4,6 +4,7 @@ import com.bookStore.bookstore.module.client.DTO.ClientDTO;
 import com.bookStore.bookstore.module.client.exception.ClientDeletedException;
 import com.bookStore.bookstore.module.client.exception.ClientNotFoundException;
 import com.bookStore.bookstore.module.client.model.Client;
+import com.bookStore.bookstore.module.client.model.RoleClient;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.client.model.StatusClient;
 import com.bookStore.bookstore.module.client.repository.ClientRepository;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -23,23 +25,23 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ClientService {
 
-    private final UserRepository repository;
-    private final UserValidator validator;
-    private final UserMapper mapper;
     private final ClientRepository repository;
     private final ClientValidator validator;
+    private final PasswordEncoder encoder;
 
-    public User create(User user){
-        validator.validateUser(user);
     public Client getClientByUsername(String username){
-        return repository.findByEmailAndStatus(username, StatusClient.ACTIVE)
+        return repository.findByUsernameAndStatus(username, StatusClient.ACTIVE)
                 .orElseThrow(() -> new ClientNotFoundException("User not found"));
     }
 
+    public Client create(Client client){
+        validator.validateClient(client);
 
         try {
-            user.setStatus(StatusUser.ACTIVE);
-            return repository.save(user);
+            client.setPassword(encoder.encode(client.getPassword()));
+            client.setStatus(StatusClient.ACTIVE);
+            client.setRole(RoleClient.USER);
+            return repository.save(client);
 
         } catch (DataIntegrityViolationException e) {
             String message = e.getMostSpecificCause().getMessage();
@@ -93,8 +95,8 @@ public class ClientService {
             throw new ClientDeletedException("This user is already deleted");
         }
 
-        if (dto.username() != null && !dto.username().equals(user.getUsername())) {
-            user.setUsername(dto.username());
+        if (dto.username() != null && !dto.username().equals(client.getUsername())) {
+            client.setUsername(dto.username());
         }
 
         if (dto.email() != null && !dto.email().equals(client.getEmail())) {
@@ -102,7 +104,7 @@ public class ClientService {
         }
 
         if (dto.password() != null) {
-            client.setPassword(dto.password());
+            client.setPassword(encoder.encode(dto.password()));
         }
 
         if (dto.dateBirth() != null) {
