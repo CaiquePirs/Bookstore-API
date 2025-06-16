@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -31,12 +32,14 @@ public class ClientController implements GenericController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClientResponseDTO> searchById(@PathVariable UUID id){
       var client = service.searchById(id);
       return ResponseEntity.ok(mapper.toDTO(client));
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<ClientResponseDTO>> listClient(
             @RequestParam(value = "username", required = false) String username,
             @RequestParam(value = "status", required = false) StatusClient status,
@@ -49,6 +52,7 @@ public class ClientController implements GenericController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
        service.softDelete(id);
        return ResponseEntity.noContent().build();
@@ -56,10 +60,10 @@ public class ClientController implements GenericController {
 
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ClientResponseDTO> update(@PathVariable UUID id, @Valid @RequestBody ClientDTO dto){
        var client = service.update(id, dto);
        var uri = generateHeaderLocation(id);
        return ResponseEntity.created(uri).body(mapper.toDTO(client));
     }
-
 }

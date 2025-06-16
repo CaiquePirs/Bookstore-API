@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class AuthorController implements GenericController {
     private final AuthorMapper mapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AuthorResponseDTO> create(@RequestBody @Valid AuthorDTO dto) {
            var author = service.create(dto);
            var uri = generateHeaderLocation(author.getId());
@@ -33,12 +35,14 @@ public class AuthorController implements GenericController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AuthorResponseDTO> searchAuthor(@PathVariable UUID id) {
         var author = service.searchById(id);
         return ResponseEntity.ok(mapper.toDTO(author));
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<AuthorResponseDTO>> filterSearch(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "nationality", required = false) String nationality,
@@ -53,12 +57,14 @@ public class AuthorController implements GenericController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteAuthor(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AuthorResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid AuthorDTO dto) {
             var author = service.update(id, dto);
             var uri = generateHeaderLocation(id);

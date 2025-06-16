@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ public class BookController implements GenericController {
     private final BookMapper mapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseBookDTO> create(@RequestBody @Valid BookDTO bookDTO){
           Book book = service.create(bookDTO);
           var uri = generateHeaderLocation(book.getId());
@@ -30,12 +32,14 @@ public class BookController implements GenericController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseBookDTO> searchBookById(@PathVariable UUID id){
         var book = service.getById(id);
         return ResponseEntity.ok(mapper.toDTO(book));
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Page<ResponseBookDTO>> searchBookByQuery(
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "isbn", required = false) String isbn,
@@ -51,12 +55,14 @@ public class BookController implements GenericController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id){
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseBookDTO> update(@PathVariable UUID id, @RequestBody BookDTO dto){
         var book = service.update(id, dto);
         var uri = generateHeaderLocation(id);
