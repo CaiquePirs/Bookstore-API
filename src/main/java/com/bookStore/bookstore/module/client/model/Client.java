@@ -42,7 +42,10 @@ public class Client {
     @UpdateTimestamp
     private LocalDateTime UpdateTimestamp;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    private RoleClient role;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Order> orders = new ArrayList<>();
 
