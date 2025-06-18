@@ -42,8 +42,8 @@ public class BookService {
         Book book = mapper.toEntity(dto);
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        book.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        book.setUserAuditId(findUserLogged.getId());
 
         book.setAuthor(author);
         book.setStatus(StatusBook.AVAILABLE);
@@ -115,8 +115,8 @@ public class BookService {
         existBook.setStatus(StatusBook.DELETED_AT);
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        existBook.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        existBook.setUserAuditId(findUserLogged.getId());
 
         repository.save(existBook);
     }
@@ -138,8 +138,8 @@ public class BookService {
         var author = authorService.searchById(dto.authorId());
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        author.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        book.setUserAuditId(findUserLogged.getId());
 
         book.setIsbn(dto.isbn());
         book.setTitle(dto.title());

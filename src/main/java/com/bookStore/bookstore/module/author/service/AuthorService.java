@@ -34,8 +34,8 @@ public class AuthorService {
         validator.validate(author);
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        author.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        author.setUserAuditId(findUserLogged.getId());
 
         author.setStatus(StatusAuthor.ACTIVE);
         return repository.save(author);
@@ -86,8 +86,8 @@ public class AuthorService {
         author.setStatus(StatusAuthor.DELETED_AT);
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        author.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        author.setUserAuditId(findUserLogged.getId());
 
         repository.save(author);
     }
@@ -111,8 +111,8 @@ public class AuthorService {
         validator.validate(author);
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        author.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        author.setUserAuditId(findUserLogged.getId());
 
         return repository.save(author);
     }

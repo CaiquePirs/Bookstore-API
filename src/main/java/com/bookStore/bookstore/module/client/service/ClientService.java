@@ -31,18 +31,22 @@ public class ClientService {
     private final PasswordEncoder encoder;
     private final SecurityService securityService;
 
-    public Client getClientByUsername(String username){
-        return repository.findByUsernameAndStatus(username, StatusClient.ACTIVE)
-                .orElseThrow(() -> new ClientNotFoundException("User not found"));
+    public Optional<Client> getClientForAuthentication(String username){
+        return repository.findByUsernameAndStatus(username, StatusClient.ACTIVE);
+    }
+
+    public Client getClientForAudit(String username){
+        return repository.findByUsernameAndStatus(username, StatusClient.ACTIVE).
+                orElse(null);
     }
 
     public Client create(Client client){
         validator.validateClient(client);
 
         try {
-            var userLogged = securityService.getLoggedUsername();
-            var findUserLogged = getClientByUsername(userLogged);
-            client.setUserLogged(findUserLogged);
+           var userLogged = securityService.getLoggedUsername();
+            var findUserLogged = getClientForAudit(userLogged);
+            client.setUserAuditId(findUserLogged.getId());
 
             client.setPassword(encoder.encode(client.getPassword()));
             client.setStatus(StatusClient.ACTIVE);
@@ -76,8 +80,8 @@ public class ClientService {
         client.setStatus(StatusClient.DELETED_AT);
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = getClientByUsername(userLogged);
-        client.setUserLogged(findUserLogged);
+        var findUserLogged = getClientForAudit(userLogged);
+        client.setUserAuditId(findUserLogged.getId());
         repository.save(client);
     }
 
@@ -125,8 +129,8 @@ public class ClientService {
 
         try {
             var userLogged = securityService.getLoggedUsername();
-            var findUserLogged = getClientByUsername(userLogged);
-            client.setUserLogged(findUserLogged);
+            var findUserLogged = getClientForAudit(userLogged);
+            client.setUserAuditId(findUserLogged.getId());
             return repository.save(client);
 
         } catch (DataIntegrityViolationException e) {

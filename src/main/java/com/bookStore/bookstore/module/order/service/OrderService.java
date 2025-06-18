@@ -37,8 +37,8 @@ public class OrderService {
         var order = validate.validateOrder(dto);
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        order.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        order.setUserAuditId(findUserLogged.getId());
 
         repository.save(order);
         return generate.createOrderResponseDTO(order);
@@ -70,8 +70,8 @@ public class OrderService {
         }
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        order.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        order.setUserAuditId(findUserLogged.getId());
 
         repository.deleteById(id);
     }
@@ -103,8 +103,8 @@ public class OrderService {
         }
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        existingOrder.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        existingOrder.setUserAuditId(findUserLogged.getId());
 
         repository.save(existingOrder);
         return generate.createOrderResponseDTO(existingOrder);
@@ -119,8 +119,8 @@ public class OrderService {
         }
 
         var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientByUsername(userLogged);
-        order.setUserLogged(findUserLogged);
+        var findUserLogged = clientService.getClientForAudit(userLogged);
+        order.setUserAuditId(findUserLogged.getId());
 
         order.getBook().setStatus(StatusBook.AVAILABLE);
         order.setStatus(StatusOrder.RETURNED);

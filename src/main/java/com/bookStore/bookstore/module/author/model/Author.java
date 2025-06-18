@@ -1,7 +1,6 @@
 package com.bookStore.bookstore.module.author.model;
 
 import com.bookStore.bookstore.module.book.model.Book;
-import com.bookStore.bookstore.module.client.model.Client;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -43,9 +42,7 @@ public class Author {
     @UpdateTimestamp
     private LocalDateTime UpdateTimestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    Client userLogged;
+    private UUID userAuditId;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
