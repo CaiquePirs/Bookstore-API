@@ -2,9 +2,11 @@ package com.bookStore.bookstore.module.client.model;
 
 import com.bookStore.bookstore.module.order.model.Order;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
@@ -42,8 +44,9 @@ public class Client {
     @UpdateTimestamp
     private LocalDateTime UpdateTimestamp;
 
-    @Enumerated(EnumType.STRING)
-    private RoleClient role;
+    @Type(ListArrayType.class)
+    @Column(name = "roles", columnDefinition = "varchar[]")
+    private List<String> roles;
 
     private UUID userAuditId;
 

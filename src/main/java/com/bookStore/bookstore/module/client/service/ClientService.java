@@ -4,7 +4,6 @@ import com.bookStore.bookstore.module.client.DTO.ClientDTO;
 import com.bookStore.bookstore.module.client.exception.ClientDeletedException;
 import com.bookStore.bookstore.module.client.exception.ClientNotFoundException;
 import com.bookStore.bookstore.module.client.model.Client;
-import com.bookStore.bookstore.module.client.model.RoleClient;
 import com.bookStore.bookstore.module.common.exception.DuplicateRecordException;
 import com.bookStore.bookstore.module.client.model.StatusClient;
 import com.bookStore.bookstore.module.client.repository.ClientRepository;
@@ -20,6 +19,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -50,7 +51,8 @@ public class ClientService {
 
             client.setPassword(encoder.encode(client.getPassword()));
             client.setStatus(StatusClient.ACTIVE);
-            client.setRole(RoleClient.USER);
+            client.setRoles(List.of("USER"));
+
             return repository.save(client);
 
         } catch (DataIntegrityViolationException e) {
