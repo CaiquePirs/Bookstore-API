@@ -19,7 +19,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.UUID;
 
 @Service
@@ -35,6 +39,15 @@ public class OrderService {
 
     public OrderResponseDTO create(OrderDTO dto){
         var order = validate.validateOrder(dto);
+        var currentUserId = clientAuditService.getCurrentUserAuditId();
+
+        boolean isSelf = order.getClient().getId().equals(currentUserId);
+        boolean isAdmin = clientAuditService.getCurrentUserRoles().contains("ADMIN");
+
+        if (!isSelf && !isAdmin) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to create this order.");
+        }
+
         order.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         repository.save(order);
         return generate.createOrderResponseDTO(order);
@@ -100,6 +113,7 @@ public class OrderService {
         return generate.createOrderResponseDTO(existingOrder);
     }
 
+    @Transactional
     public void returnedOrder(UUID id){
         var order = repository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Order ID not found"));
@@ -108,7 +122,16 @@ public class OrderService {
             throw new OrderReturnedException("This order has already been returned");
         }
 
-        order.setUserAuditId(clientAuditService.getCurrentUserAuditId());
+        var currentUserId = clientAuditService.getCurrentUserAuditId();
+
+        boolean isSelf = order.getClient().getId().equals(currentUserId);
+        boolean isAdmin = clientAuditService.getCurrentUserRoles().contains("ADMIN");
+
+        if (!isSelf && !isAdmin) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to return this order.");
+        }
+
+        order.setUserAuditId(currentUserId);
         order.getBook().setStatus(StatusBook.AVAILABLE);
         order.setStatus(StatusOrder.RETURNED);
         repository.save(order);

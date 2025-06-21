@@ -15,8 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -64,8 +66,18 @@ public class ClientService {
 
     public void softDelete(UUID id){
         var client = searchById(id);
-        client.setStatus(StatusClient.DELETED_AT);
+
+        var currentUserId = clientAuditService.getCurrentUserAuditId();
+
+        boolean isSelf = client.getId().equals(currentUserId);
+        boolean isAdmin = clientAuditService.getCurrentUserRoles().contains("ADMIN");
+
+        if (!isSelf && !isAdmin) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only delete your own account.");
+        }
+
         client.setUserAuditId(clientAuditService.getCurrentUserAuditId());
+        client.setStatus(StatusClient.DELETED_AT);
         repository.save(client);
     }
 
@@ -112,7 +124,15 @@ public class ClientService {
         validator.validateClient(client);
 
         try {
-            client.setUserAuditId(clientAuditService.getCurrentUserAuditId());
+            var currentUserId = clientAuditService.getCurrentUserAuditId();
+
+            boolean isSelf = client.getId().equals(currentUserId);
+            boolean isAdmin = clientAuditService.getCurrentUserRoles().contains("ADMIN");
+
+            if (!isSelf && !isAdmin) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only delete your own account.");
+            }
+
             return repository.save(client);
 
         } catch (DataIntegrityViolationException e) {
