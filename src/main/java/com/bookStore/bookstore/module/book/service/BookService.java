@@ -116,12 +116,10 @@ public class BookService {
 
     public Book update(UUID id, BookDTO dto){
         searchISBN(dto.isbn(), id);
+        var book = getById(dto.id());
 
-        var book = repository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException("Book ID not found"));
-
-        if(book.getStatus().equals(StatusBook.DELETED_AT)){
-            throw new BookUnavailableException("This book has already been deleted");
+        if(book.getStatus().equals(StatusBook.UNAVAILABLE)){
+            throw new BookUnavailableException("This book is unavailable");
         }
 
         var author = authorService.searchById(dto.authorId());
