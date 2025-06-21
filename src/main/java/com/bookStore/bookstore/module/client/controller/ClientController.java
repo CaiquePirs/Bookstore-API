@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.module.client.controller;
 
-import com.bookStore.bookstore.module.client.DTO.ClientDTO;
+import com.bookStore.bookstore.module.client.DTO.ClientRequestDTO;
 import com.bookStore.bookstore.module.client.DTO.ClientResponseDTO;
 import com.bookStore.bookstore.module.client.mappers.ClientMapper;
 import com.bookStore.bookstore.module.client.model.Client;
@@ -25,7 +25,7 @@ public class ClientController implements GenericController {
     private final ClientMapper mapper;
 
     @PostMapping
-    public ResponseEntity<ClientResponseDTO> create(@RequestBody @Valid ClientDTO dto){
+    public ResponseEntity<ClientResponseDTO> create(@RequestBody @Valid ClientRequestDTO dto){
         var client = service.create(mapper.toEntity(dto));
         var uri = generateHeaderLocation(client.getId());
         return ResponseEntity.created(uri).body(mapper.toDTO(client));
@@ -61,7 +61,7 @@ public class ClientController implements GenericController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ClientResponseDTO> update(@PathVariable UUID id, @Valid @RequestBody ClientDTO dto){
+    public ResponseEntity<ClientResponseDTO> update(@PathVariable UUID id, @Valid @RequestBody ClientRequestDTO dto){
        var client = service.update(id, dto);
        var uri = generateHeaderLocation(id);
        return ResponseEntity.created(uri).body(mapper.toDTO(client));

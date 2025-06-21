@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.module.client.service;
 
-import com.bookStore.bookstore.module.client.DTO.ClientDTO;
+import com.bookStore.bookstore.module.client.DTO.ClientRequestDTO;
 import com.bookStore.bookstore.module.client.exception.ClientDeletedException;
 import com.bookStore.bookstore.module.client.exception.ClientNotFoundException;
 import com.bookStore.bookstore.module.client.model.Client;
@@ -86,7 +86,7 @@ public class ClientService {
         return repository.findAll(specs, pageRequest);
     }
 
-    public Client update(UUID id, ClientDTO dto) {
+    public Client update(UUID id, ClientRequestDTO dto) {
         var client = searchById(id);
 
         if (client.getStatus() == StatusClient.DELETED_AT) {

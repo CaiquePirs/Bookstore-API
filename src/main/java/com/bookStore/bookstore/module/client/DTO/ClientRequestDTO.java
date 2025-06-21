@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public record ClientDTO(@NotBlank(message = "Username is required")
+public record ClientRequestDTO(@NotBlank(message = "Username is required")
                         @Size(max = 30, message = "Username must be up to 30 characters long")
                         String username,
                         @NotBlank(message = "Email is required")
