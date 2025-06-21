@@ -36,6 +36,7 @@ public class Client {
     @Column(nullable = false)
     private LocalDate dateBirth;
 
+    @Enumerated(EnumType.STRING)
     private StatusClient status;
 
     @CreationTimestamp

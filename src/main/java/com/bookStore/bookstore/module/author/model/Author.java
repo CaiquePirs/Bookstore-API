@@ -34,6 +34,7 @@ public class Author {
     @Column(nullable = false)
     private LocalDate dateBirth;
 
+    @Enumerated(EnumType.STRING)
     private StatusAuthor status;
 
     @CreationTimestamp
