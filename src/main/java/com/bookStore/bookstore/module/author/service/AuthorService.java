@@ -9,8 +9,7 @@ import com.bookStore.bookstore.module.author.model.StatusAuthor;
 import com.bookStore.bookstore.module.author.repository.AuthorRepository;
 import com.bookStore.bookstore.module.author.repository.AuthorSpecs;
 import com.bookStore.bookstore.module.author.validator.AuthorValidator;
-import com.bookStore.bookstore.module.client.service.ClientService;
-import com.bookStore.bookstore.security.SecurityService;
+import com.bookStore.bookstore.module.client.service.ClientAuditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,18 +24,13 @@ public class AuthorService {
    private final AuthorRepository repository;
    private final AuthorValidator validator;
    private final AuthorMapper mapper;
-   private final SecurityService securityService;
-   private final ClientService clientService;
+   private final ClientAuditService clientAuditService;
 
 
     public Author create(AuthorDTO dto){
         Author author = mapper.toEntity(dto);
         validator.validate(author);
-
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        author.setUserAuditId(findUserLogged.getId());
-
+        author.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         author.setStatus(StatusAuthor.ACTIVE);
         return repository.save(author);
     }
@@ -84,11 +78,7 @@ public class AuthorService {
     public void delete(UUID id){
         var author = searchById(id);
         author.setStatus(StatusAuthor.DELETED_AT);
-
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        author.setUserAuditId(findUserLogged.getId());
-
+        author.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         repository.save(author);
     }
 
@@ -109,11 +99,7 @@ public class AuthorService {
         }
 
         validator.validate(author);
-
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        author.setUserAuditId(findUserLogged.getId());
-
+        author.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         return repository.save(author);
     }
 

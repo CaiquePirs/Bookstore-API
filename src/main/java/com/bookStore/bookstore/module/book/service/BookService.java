@@ -10,10 +10,9 @@ import com.bookStore.bookstore.module.book.mapper.BookMapper;
 import com.bookStore.bookstore.module.book.model.Book;
 import com.bookStore.bookstore.module.book.repository.BookRepository;
 import com.bookStore.bookstore.module.book.validator.BookValidator;
-import com.bookStore.bookstore.module.client.service.ClientService;
+import com.bookStore.bookstore.module.client.service.ClientAuditService;
 import com.bookStore.bookstore.module.order.model.StatusOrder;
 import com.bookStore.bookstore.module.order.repository.OrderRepository;
-import com.bookStore.bookstore.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,20 +31,15 @@ public class BookService {
     private final BookValidator validator;
     private final BookMapper mapper;
     private final AuthorService authorService;
-    private final SecurityService securityService;
-    private final ClientService clientService;
+    private final ClientAuditService clientAuditService;
 
     public Book create(BookDTO dto){
         var author = authorService.searchById(dto.authorId());
-
         validator.validateIsbn(dto.isbn(), null);
         Book book = mapper.toEntity(dto);
 
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        book.setUserAuditId(findUserLogged.getId());
-
         book.setAuthor(author);
+        book.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         book.setStatus(StatusBook.AVAILABLE);
         return repository.save(book);
     }
@@ -99,8 +93,7 @@ public class BookService {
 
 
     public void deleteById(UUID id){
-        var existBook = repository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException("Book ID not found"));
+        var existBook = getById(id);
 
         var existOrderActive = orderRepository.existsByBookAndStatusNot(existBook, StatusOrder.RETURNED);
 
@@ -113,11 +106,7 @@ public class BookService {
         }
 
         existBook.setStatus(StatusBook.DELETED_AT);
-
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        existBook.setUserAuditId(findUserLogged.getId());
-
+        existBook.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         repository.save(existBook);
     }
 
@@ -137,16 +126,12 @@ public class BookService {
 
         var author = authorService.searchById(dto.authorId());
 
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        book.setUserAuditId(findUserLogged.getId());
-
+        book.setUserAuditId(clientAuditService.getCurrentUserAuditId());;
         book.setIsbn(dto.isbn());
         book.setTitle(dto.title());
         book.setPublisher(dto.publisher());
         book.setPublicationDate(dto.publicationDate());
         book.setAuthor(author);
-
         return repository.save(book);
     }
 

@@ -2,6 +2,7 @@ package com.bookStore.bookstore.module.order.service;
 
 import com.bookStore.bookstore.module.book.model.StatusBook;
 import com.bookStore.bookstore.module.book.service.BookService;
+import com.bookStore.bookstore.module.client.service.ClientAuditService;
 import com.bookStore.bookstore.module.order.DTO.OrderDTO;
 import com.bookStore.bookstore.module.order.DTO.OrderResponseDTO;
 import com.bookStore.bookstore.module.order.exception.OrderLoanedException;
@@ -13,7 +14,6 @@ import com.bookStore.bookstore.module.order.repository.OrderRepository;
 import com.bookStore.bookstore.module.order.util.GenerateOrderResponse;
 import com.bookStore.bookstore.module.order.validator.OrderValidator;
 import com.bookStore.bookstore.module.client.service.ClientService;
-import com.bookStore.bookstore.security.SecurityService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,17 +29,13 @@ public class OrderService {
     private final OrderRepository repository;
     private final OrderValidator validate;
     private final BookService bookService;
+    private final ClientAuditService clientAuditService;
     private final ClientService clientService;
     private final GenerateOrderResponse generate;
-    private final SecurityService securityService;
 
     public OrderResponseDTO create(OrderDTO dto){
         var order = validate.validateOrder(dto);
-
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        order.setUserAuditId(findUserLogged.getId());
-
+        order.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         repository.save(order);
         return generate.createOrderResponseDTO(order);
     }
@@ -69,10 +65,7 @@ public class OrderService {
             throw new OrderLoanedException("Error deleting: This order is active");
         }
 
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        order.setUserAuditId(findUserLogged.getId());
-
+        order.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         repository.deleteById(id);
     }
 
@@ -102,10 +95,7 @@ public class OrderService {
             existingOrder.setStatus(dto.statusOrder());
         }
 
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        existingOrder.setUserAuditId(findUserLogged.getId());
-
+        existingOrder.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         repository.save(existingOrder);
         return generate.createOrderResponseDTO(existingOrder);
     }
@@ -118,10 +108,7 @@ public class OrderService {
             throw new OrderReturnedException("This order has already been returned");
         }
 
-        var userLogged = securityService.getLoggedUsername();
-        var findUserLogged = clientService.getClientForAudit(userLogged);
-        order.setUserAuditId(findUserLogged.getId());
-
+        order.setUserAuditId(clientAuditService.getCurrentUserAuditId());
         order.getBook().setStatus(StatusBook.AVAILABLE);
         order.setStatus(StatusOrder.RETURNED);
         repository.save(order);
