@@ -1,5 +1,6 @@
 package com.bookStore.bookstore.module.client.controller;
 
+import com.bookStore.bookstore.docs.controllers.ClientAuthControllerDoc;
 import com.bookStore.bookstore.module.client.DTO.AuthResponseDTO;
 import com.bookStore.bookstore.module.client.DTO.LoginRequestDTO;
 import com.bookStore.bookstore.module.client.model.StatusClient;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class ClientAuthController {
+public class ClientAuthController implements ClientAuthControllerDoc {
 
     private final AuthenticationManager authManager;
     private final JwtUtil jwtUtil;

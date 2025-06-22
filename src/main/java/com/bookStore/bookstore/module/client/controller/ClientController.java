@@ -1,5 +1,6 @@
 package com.bookStore.bookstore.module.client.controller;
 
+import com.bookStore.bookstore.docs.controllers.ClientControllerDoc;
 import com.bookStore.bookstore.module.client.DTO.ClientRequestDTO;
 import com.bookStore.bookstore.module.client.DTO.ClientResponseDTO;
 import com.bookStore.bookstore.module.client.mappers.ClientMapper;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/clients")
 @RequiredArgsConstructor
-public class ClientController implements GenericController {
+public class ClientController implements GenericController, ClientControllerDoc {
 
     private final ClientService service;
     private final ClientMapper mapper;

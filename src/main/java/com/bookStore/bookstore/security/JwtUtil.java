@@ -12,7 +12,7 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 horas
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateToken(String username) {

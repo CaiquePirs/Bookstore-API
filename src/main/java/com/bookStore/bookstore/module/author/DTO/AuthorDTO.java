@@ -4,9 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-public record AuthorDTO(UUID id,
+public record AuthorDTO(
                         @NotBlank(message = "Name is required")
                         String name,
 

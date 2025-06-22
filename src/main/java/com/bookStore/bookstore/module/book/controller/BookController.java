@@ -1,5 +1,6 @@
 package com.bookStore.bookstore.module.book.controller;
 
+import com.bookStore.bookstore.docs.controllers.BookControllerDoc;
 import com.bookStore.bookstore.module.book.DTO.BookDTO;
 import com.bookStore.bookstore.module.book.DTO.ResponseBookDTO;
 import com.bookStore.bookstore.module.book.mapper.BookMapper;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
-public class BookController implements GenericController {
+public class BookController implements GenericController, BookControllerDoc {
 
     private final BookService service;
     private final BookMapper mapper;

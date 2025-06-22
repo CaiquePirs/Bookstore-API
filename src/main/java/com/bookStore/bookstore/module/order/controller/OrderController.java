@@ -1,5 +1,6 @@
 package com.bookStore.bookstore.module.order.controller;
 
+import com.bookStore.bookstore.docs.controllers.OrderControllerDoc;
 import com.bookStore.bookstore.module.order.DTO.OrderDTO;
 import com.bookStore.bookstore.module.order.DTO.OrderResponseDTO;
 import com.bookStore.bookstore.module.order.model.Order;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/orders")
 @AllArgsConstructor
-public class OrderController implements GenericController {
+public class OrderController implements GenericController, OrderControllerDoc {
 
     private final OrderService service;
     private final GenerateOrderResponse generate;
@@ -72,5 +73,4 @@ public class OrderController implements GenericController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }

@@ -1,5 +1,6 @@
 package com.bookStore.bookstore.module.author.controller;
 
+import com.bookStore.bookstore.docs.controllers.AuthorControllerDoc;
 import com.bookStore.bookstore.module.author.DTO.AuthorDTO;
 import com.bookStore.bookstore.module.author.DTO.AuthorResponseDTO;
 import com.bookStore.bookstore.module.author.mapper.AuthorMapper;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/authors")
 @RequiredArgsConstructor
-public class AuthorController implements GenericController {
+public class AuthorController implements GenericController, AuthorControllerDoc {
 
     private final AuthorService service;
     private final AuthorMapper mapper;
