@@ -50,6 +50,36 @@ Authentication is done with JWT (JSON Web Token):
   ```
   Authorization: Bearer <token>
   ```
+### 📌 Available Endpoints
+
+- **Orders**
+  - `POST /orders{id}/return` → returns a borrowed book
+  - `POST /orders` → creates a new order
+  - `GET /orders` → retrieves all orders using filters
+  - `GET /orders/{id}` → retrieves an order by ID
+  - `PUT /orders/{id}` → updates an order by ID
+  - `DELETE /orders/{id}` → deletes an order by ID
+
+- **Authors**
+  - `POST /authors` → creates a new author
+  - `GET /authors` → retrieves all authors using filters
+  - `GET /authors/{id}` → retrieves an author by ID
+  - `PUT /authors/{id}` → updates an author by ID
+  - `DELETE /authors/{id}` → deletes an author by ID
+
+- **Books**
+  - `POST /books` → creates a new book
+  - `GET /books` → retrieves all books using filters
+  - `GET /books/{id}` → retrieves a book by ID
+  - `PUT /books/{id}` → updates a book by ID
+  - `DELETE /books/{id}` → deletes a book by ID
+
+- **Clients**
+  - `POST /clients` → creates a new client
+  - `GET /client` → retrieves all clients using filters
+  - `GET /client/{id}` → retrieves a client by ID
+  - `PUT /client/{id}` → updates a client by ID
+  - `DELETE /client/{id}` -> deletes a client by ID
 
 Roles and permissions are managed using `@PreAuthorize` and Spring Security filters.
 
