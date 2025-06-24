@@ -2,6 +2,10 @@ spring:
   application:
     name: bookstore
 
+  output:
+    ansi:
+      enabled: ALWAYS
+
   datasource:
     url: jdbc:postgresql://localhost:5432/bookstore
     username: postgres
@@ -44,5 +48,16 @@ server:
 springdoc:
   override-with-generic-response: false
 
+logging:
+  pattern:
+    console: '%clr(%d{dd-MM-yyyy HH:mm:ss}){faint} %clr(%5p) %clr([%t]){faint} %clr(%-40.40logger){cyan} %clr(:){yellow} %m%n'
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
 
