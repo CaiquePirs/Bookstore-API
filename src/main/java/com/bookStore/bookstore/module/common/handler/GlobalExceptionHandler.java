@@ -20,6 +20,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.format.DateTimeParseException;
@@ -207,5 +208,16 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponseDTO handleAccessDeniedException(AccessDeniedException e){
       return new ErrorResponseDTO(HttpStatus.FORBIDDEN.value(), "Access denied", List.of());
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponseDTO> handleResponseStatus(ResponseStatusException e) {
+        ErrorField errorField = new ErrorField("Error", e.getMessage());
+        ErrorResponseDTO errorDTO = new ErrorResponseDTO(
+                e.getStatusCode().value(),
+                e.getMessage(),
+                List.of(errorField)
+        );
+        return ResponseEntity.status(e.getStatusCode()).body(errorDTO);
     }
 }
