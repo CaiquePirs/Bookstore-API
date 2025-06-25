@@ -13,7 +13,7 @@ public record ClientRequestDTO(@NotBlank(message = "Username is required")
                         @NotBlank(message = "Email is required")
                         @Email(message = "Email must be valid")
                         String email,
-                        @NotBlank(message = "Password os required")
+                        @NotBlank(message = "Password is required")
                         String password,
                         @NotNull(message = "Date birth is required")
                         LocalDate dateBirth) {
