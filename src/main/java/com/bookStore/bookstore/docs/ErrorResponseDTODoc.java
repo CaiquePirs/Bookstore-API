@@ -1,4 +1,4 @@
-package com.bookStore.bookstore.docs.DTOs;
+package com.bookStore.bookstore.docs;
 
 import com.bookStore.bookstore.module.common.error.ErrorField;
 import io.swagger.v3.oas.annotations.media.Schema;

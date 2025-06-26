@@ -1,4 +1,4 @@
-package com.bookStore.bookstore.docs.controllers;
+package com.bookStore.bookstore.docs;
 
 import com.bookStore.bookstore.module.client.DTO.AuthResponseDTO;
 import com.bookStore.bookstore.module.client.DTO.LoginRequestDTO;

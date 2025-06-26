@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.module.order.controller;
 
-import com.bookStore.bookstore.docs.controllers.OrderControllerDoc;
+import com.bookStore.bookstore.docs.OrderControllerDoc;
 import com.bookStore.bookstore.module.order.DTO.OrderDTO;
 import com.bookStore.bookstore.module.order.DTO.OrderResponseDTO;
 import com.bookStore.bookstore.module.order.model.Order;

@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.module.book.controller;
 
-import com.bookStore.bookstore.docs.controllers.BookControllerDoc;
+import com.bookStore.bookstore.docs.BookControllerDoc;
 import com.bookStore.bookstore.module.book.DTO.BookDTO;
 import com.bookStore.bookstore.module.book.DTO.ResponseBookDTO;
 import com.bookStore.bookstore.module.book.mapper.BookMapper;

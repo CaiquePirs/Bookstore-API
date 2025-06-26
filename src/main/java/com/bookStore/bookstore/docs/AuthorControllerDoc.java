@@ -1,4 +1,4 @@
-package com.bookStore.bookstore.docs.controllers;
+package com.bookStore.bookstore.docs;
 
 import com.bookStore.bookstore.module.author.DTO.AuthorDTO;
 import com.bookStore.bookstore.module.author.DTO.AuthorResponseDTO;

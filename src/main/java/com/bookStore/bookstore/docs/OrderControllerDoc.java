@@ -1,4 +1,4 @@
-package com.bookStore.bookstore.docs.controllers;
+package com.bookStore.bookstore.docs;
 
 import com.bookStore.bookstore.module.common.error.ErrorResponseDTO;
 import com.bookStore.bookstore.module.order.DTO.OrderDTO;

@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.module.author.controller;
 
-import com.bookStore.bookstore.docs.controllers.AuthorControllerDoc;
+import com.bookStore.bookstore.docs.AuthorControllerDoc;
 import com.bookStore.bookstore.module.author.DTO.AuthorDTO;
 import com.bookStore.bookstore.module.author.DTO.AuthorResponseDTO;
 import com.bookStore.bookstore.module.author.mapper.AuthorMapper;

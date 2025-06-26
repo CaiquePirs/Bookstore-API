@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.module.client.controller;
 
-import com.bookStore.bookstore.docs.controllers.ClientAuthControllerDoc;
+import com.bookStore.bookstore.docs.ClientAuthControllerDoc;
 import com.bookStore.bookstore.module.client.DTO.AuthResponseDTO;
 import com.bookStore.bookstore.module.client.DTO.LoginRequestDTO;
 import com.bookStore.bookstore.module.client.model.StatusClient;

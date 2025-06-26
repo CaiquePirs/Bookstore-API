@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.module.client.controller;
 
-import com.bookStore.bookstore.docs.controllers.ClientControllerDoc;
+import com.bookStore.bookstore.docs.ClientControllerDoc;
 import com.bookStore.bookstore.module.client.DTO.ClientRequestDTO;
 import com.bookStore.bookstore.module.client.DTO.ClientResponseDTO;
 import com.bookStore.bookstore.module.client.mappers.ClientMapper;

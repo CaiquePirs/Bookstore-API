@@ -1,8 +1,8 @@
-package com.bookStore.bookstore.docs.controllers;
+package com.bookStore.bookstore.docs;
 
-import com.bookStore.bookstore.module.book.DTO.BookDTO;
-import com.bookStore.bookstore.module.book.DTO.ResponseBookDTO;
-import com.bookStore.bookstore.module.book.model.StatusBook;
+import com.bookStore.bookstore.module.client.DTO.ClientRequestDTO;
+import com.bookStore.bookstore.module.client.DTO.ClientResponseDTO;
+import com.bookStore.bookstore.module.client.model.StatusClient;
 import com.bookStore.bookstore.module.common.error.ErrorResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Tag(name = "Books", description = "Endpoints for managing books in the system")
-public interface BookControllerDoc {
+@Tag(name = "Clients", description = "Endpoints for managing system clients")
+public interface ClientControllerDoc {
 
-    @Operation(summary = "Create Book", description = "Register a new book")
+    @Operation(summary = "Create Client", description = "Register a new client")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Book created successfully"),
+            @ApiResponse(responseCode = "201", description = "Client created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorResponseDTO.class),
@@ -32,37 +32,37 @@ public interface BookControllerDoc {
                   "status": 400,
                   "message": "Validation failed",
                   "errors": [
-                    { "field": "title", "message": "Title is required" },
-                    { "field": "isbn", "message": "ISBN must be valid" }
+                    { "field": "email", "message": "Email is invalid" },
+                    { "field": "password", "message": "Password must contain at least 8 characters" }
                   ]
                 }
             """)
             )),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorResponseDTO.class),
                     examples = @ExampleObject(value = """
                 {
-                  "status": 403,
-                  "message": "Access denied",
+                  "status": 401,
+                  "message": "Unauthorized access",
                   "errors": []
                 }
             """)
             ))
     })
     @PostMapping
-    ResponseEntity<ResponseBookDTO> create(@RequestBody @Valid BookDTO bookDTO);
+    ResponseEntity<ClientResponseDTO> create(@RequestBody @Valid ClientRequestDTO dto);
 
-    @Operation(summary = "Get Book by ID", description = "Retrieve a book using its ID")
+    @Operation(summary = "Find Client by ID", description = "Retrieve a client by their ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Book found"),
-            @ApiResponse(responseCode = "404", description = "Book not found", content = @Content(
+            @ApiResponse(responseCode = "200", description = "Client found successfully"),
+            @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorResponseDTO.class),
                     examples = @ExampleObject(value = """
                 {
                   "status": 404,
-                  "message": "Book not found",
+                  "message": "Client not found",
                   "errors": []
                 }
             """)
@@ -80,11 +80,11 @@ public interface BookControllerDoc {
             ))
     })
     @GetMapping("{id}")
-    ResponseEntity<ResponseBookDTO> searchBookById(@PathVariable UUID id);
+    ResponseEntity<ClientResponseDTO> searchById(@PathVariable UUID id);
 
-    @Operation(summary = "Search Books", description = "Search for books by title, ISBN, publisher, author, and status")
+    @Operation(summary = "List Clients", description = "Search or list all clients by username, status and pagination")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Books retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Clients retrieved successfully"),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorResponseDTO.class),
@@ -98,26 +98,23 @@ public interface BookControllerDoc {
             ))
     })
     @GetMapping
-    ResponseEntity<Page<ResponseBookDTO>> searchBookByQuery(
-            @RequestParam(value = "title", required = false) String title,
-            @RequestParam(value = "isbn", required = false) String isbn,
-            @RequestParam(value = "publisher", required = false) String publisher,
-            @RequestParam(value = "author", required = false) String author,
-            @RequestParam(value = "status", required = false) StatusBook status,
+    ResponseEntity<Page<ClientResponseDTO>> listClient(
+            @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "status", required = false) StatusClient status,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size-page", defaultValue = "10") Integer sizePage
     );
 
-    @Operation(summary = "Delete Book", description = "Delete a book by ID")
+    @Operation(summary = "Delete Client", description = "Soft delete a client by their ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Book deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Book not found", content = @Content(
+            @ApiResponse(responseCode = "204", description = "Client deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorResponseDTO.class),
                     examples = @ExampleObject(value = """
                 {
                   "status": 404,
-                  "message": "Book not found",
+                  "message": "Client not found",
                   "errors": []
                 }
             """)
@@ -135,11 +132,11 @@ public interface BookControllerDoc {
             ))
     })
     @DeleteMapping("{id}")
-    ResponseEntity<Void> deleteById(@PathVariable UUID id);
+    ResponseEntity<Void> delete(@PathVariable UUID id);
 
-    @Operation(summary = "Update Book", description = "Update an existing book")
+    @Operation(summary = "Update Client", description = "Update an existing client's information")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Book updated successfully"),
+            @ApiResponse(responseCode = "201", description = "Client updated successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorResponseDTO.class),
@@ -148,8 +145,19 @@ public interface BookControllerDoc {
                   "status": 400,
                   "message": "Validation failed",
                   "errors": [
-                    { "field": "publisher", "message": "Publisher is required" }
+                    { "field": "username", "message": "Username is too short" }
                   ]
+                }
+            """)
+            )),
+            @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponseDTO.class),
+                    examples = @ExampleObject(value = """
+                {
+                  "status": 404,
+                  "message": "Client not found",
+                  "errors": []
                 }
             """)
             )),
@@ -166,7 +174,7 @@ public interface BookControllerDoc {
             ))
     })
     @PutMapping("{id}")
-    ResponseEntity<ResponseBookDTO> update(@PathVariable UUID id, @RequestBody BookDTO dto);
+    ResponseEntity<ClientResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid ClientRequestDTO dto);
 }
 
 
