@@ -81,7 +81,7 @@ Authentication is done with JWT (JSON Web Token):
   - `PUT /client/{id}` → updates a client by ID
   - `DELETE /client/{id}` -> deletes a client by ID
 
-Roles and permissions are managed using `@PreAuthorize` and Spring Security filters.
+Roles and permissions are managed using `@PreAuthorize` and Spring Security filters
 
 ## 🌐 OAuth2 Authentication with Google
 
