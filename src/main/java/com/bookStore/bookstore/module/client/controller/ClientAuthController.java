@@ -1,7 +1,7 @@
 package com.bookStore.bookstore.module.client.controller;
 
 import com.bookStore.bookstore.docs.ClientAuthControllerDoc;
-import com.bookStore.bookstore.module.client.DTO.AuthResponseDTO;
+import com.bookStore.bookstore.module.client.DTO.LoginResponseDTO;
 import com.bookStore.bookstore.module.client.DTO.LoginRequestDTO;
 import com.bookStore.bookstore.module.client.model.StatusClient;
 import com.bookStore.bookstore.module.client.repository.ClientRepository;
@@ -24,7 +24,7 @@ public class ClientAuthController implements ClientAuthControllerDoc {
     private final ClientRepository repository;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginDTO) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginDTO) {
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.username(), loginDTO.password()));
 
@@ -34,7 +34,7 @@ public class ClientAuthController implements ClientAuthControllerDoc {
         var user = repository.findByUsernameAndStatus(username, StatusClient.ACTIVE)
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
 
-        AuthResponseDTO authDTO = new AuthResponseDTO(
+        LoginResponseDTO authDTO = new LoginResponseDTO(
                 token,
                 username,
                 user.getEmail(),

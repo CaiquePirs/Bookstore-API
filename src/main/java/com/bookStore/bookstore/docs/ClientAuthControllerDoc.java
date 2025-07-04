@@ -1,6 +1,6 @@
 package com.bookStore.bookstore.docs;
 
-import com.bookStore.bookstore.module.client.DTO.AuthResponseDTO;
+import com.bookStore.bookstore.module.client.DTO.LoginResponseDTO;
 import com.bookStore.bookstore.module.client.DTO.LoginRequestDTO;
 import com.bookStore.bookstore.module.common.error.ErrorResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +44,7 @@ public interface ClientAuthControllerDoc {
             ))
     })
     @PostMapping("/login")
-    ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginDTO);
+    ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginDTO);
 }
 
 
