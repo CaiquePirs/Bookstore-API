@@ -35,7 +35,7 @@ public class AuthorController implements GenericController, AuthorControllerDoc 
            return ResponseEntity.created(uri).body(mapper.toDTO(author));
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AuthorResponseDTO> searchAuthor(@PathVariable UUID id) {
         var author = service.searchById(id);
@@ -57,14 +57,14 @@ public class AuthorController implements GenericController, AuthorControllerDoc 
         return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteAuthor(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AuthorResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid AuthorDTO dto) {
             var author = service.update(id, dto);

@@ -8,8 +8,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/bookstore
-    username: postgres
-    password: postgres
+    username: admin
+    password: admin
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -54,7 +54,7 @@ logging:
 
 management:
   server:
-    port: 9090
+    port: 3030
   endpoints:
     web:
       exposure:
