@@ -1,9 +1,11 @@
 package com.bookStore.bookstore.security;
 
-import com.bookStore.bookstore.module.client.DTO.ClientRequestDTO;
-import com.bookStore.bookstore.module.client.mappers.ClientMapper;
-import com.bookStore.bookstore.module.client.model.StatusClient;
-import com.bookStore.bookstore.module.client.repository.ClientRepository;
+import com.bookStore.bookstore.module.dtos.ClientRequestDTO;
+import com.bookStore.bookstore.module.entities.Client;
+import com.bookStore.bookstore.module.enums.StatusEntity;
+import com.bookStore.bookstore.module.mappers.ClientMapper;
+import com.bookStore.bookstore.module.repositories.ClientRepository;
+import com.bookStore.bookstore.module.utils.UtilsMethods;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -26,26 +29,24 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final String PASSWORD_DEFAULT = System.getenv("PASSWORD_DEFAULT");
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
 
-        var existClient = clientRepository.findByEmailAndStatus(email, StatusClient.ACTIVE);
-        if(existClient.isEmpty()){
-            var clientFromEmail = extractNameFromEmail(email);
+        if(clientRepository.findByEmailAndStatus(email, StatusEntity.ACTIVE).isEmpty()){
+            String usernameFromEmail = UtilsMethods.extractNameFromEmail(email);
 
             ClientRequestDTO dto = new ClientRequestDTO(
-                    clientFromEmail,
+                    usernameFromEmail,
                     email,
                     PASSWORD_DEFAULT,
                     LocalDate.now()
             );
 
-            var clientEntity = clientMapper.toEntity(dto);
-            clientEntity.setRoles(List.of("USER"));
-            clientEntity.setStatus(StatusClient.ACTIVE);
-            clientRepository.save(clientEntity);
+            Client client = clientMapper.toEntity(dto);
+            client.setRoles(List.of("USER"));
+            client.setStatus(StatusEntity.ACTIVE);
+            clientRepository.save(client);
         }
 
         String token = jwtUtil.generateToken(email);
@@ -53,19 +54,5 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json");
         response.getWriter().write("{\"token\": \"" + token + "\"}");
     }
-
-    public static String extractNameFromEmail(String email) {
-        if (email == null || email.isEmpty()) {
-            return "";
-        }
-        int atIndex = email.indexOf('@');
-
-        if (atIndex > 0) {
-            return email.substring(0, atIndex);
-        } else {
-            return "";
-        }
-    }
-
 }
 
